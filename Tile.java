@@ -4,6 +4,7 @@ import java.awt.event.MouseListener;
 
 public class Tile implements MouseListener{
 	Polygon collisionhull;
+	Unit occupier;
 	public int xPoint;
 	public int yPoint;
 	
