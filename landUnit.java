@@ -1,12 +1,10 @@
 
 public class landUnit extends Unit{
 
-	public int strength;
 	
 	
 	public landUnit(Player p, Tile pl, String c) {
 		super(p, pl);
-		strength = 1;
 	}
 	
 	public void reset() {

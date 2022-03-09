@@ -3,21 +3,17 @@ public class seaUnit extends Unit{
 	
 
 	public boolean isConvoy;
-	public int strength;
+	public boolean hasMoved;
 	
 	public seaUnit(Player p, Tile pl, String c) {
 		super(p, pl);	
 		isConvoy = false;
-		strength = 1;
 	}
 	
 	public void reset() {
 		strength = 1;
 	}
 	
-	public void changeMove() {
-		
-	}
 	
 	public void move(Tile t) {
 		try {
@@ -32,9 +28,22 @@ public class seaUnit extends Unit{
 			}
 		}
 		catch (Exception e) {
+			if (t.occupier.strength >= this.strength) {
+			}
+			else
 			
 		}
 	}
+	
+	public void convoy() {
+		isConvoy = true;
+	}
+	
+	public void support(seaUnit u) {
+		u.strength++;
+	}
+	
+	
 	
 	
 	
