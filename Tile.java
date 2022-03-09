@@ -2,7 +2,7 @@ import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Tile implements MouseListener{
+public class Tile{
 	Polygon collisionhull;
 	Unit occupier;
 	public int xPoint;
@@ -17,43 +17,6 @@ public class Tile implements MouseListener{
 		if (collisionhull.contains(x, y));
 		return false;
 	}	
-	
-
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
-	
-	
-	
-	
 	
 
 }
