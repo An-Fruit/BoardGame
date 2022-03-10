@@ -6,8 +6,7 @@ import java.util.ArrayList;
 public class Tile{
 	Polygon collisionhull;
 	Unit occupier;
-	public int xPoint;
-	public int yPoint;
+	Point loc;
 	ArrayList<Tile> adjacencyList;
 	
 	
@@ -25,7 +24,7 @@ public class Tile{
 	}
 	
 	public boolean isInside(int x, int y) {
-		if (collisionhull.contains(x, y));
+		if (collisionhull.contains(x, y)) return true;
 		return false;
 	}	
 	

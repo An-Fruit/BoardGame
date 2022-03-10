@@ -13,26 +13,28 @@ import static java.util.Collections.*;
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
 
-public class BoardGameRunner extends JFrame{
+public class BoardGameRunner extends JFrame
+{
+	private static final int WIDTH = 1000;
+	private static final int HEIGHT = 1000;
 
-	private static int WIDTH = 1080;
-	private static int LENGTH = 800;
-	
-	public static void main(String[] args) throws Exception {
-		BoardGameRunner a = new BoardGameRunner();
-		a.run();
-		
-	}
+	public BoardGameRunner()
+	{
+		super("Board Game Runner");
 
-	public void run() throws Exception {
-		
-		setSize(WIDTH, LENGTH);
-		BoardGame a = new BoardGame();
-		
-		add(a);
+		setSize(WIDTH,HEIGHT);
+			
+        BoardGame scene = new BoardGame();
+       
+		add(scene);
 		
 		setVisible(true);	
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	public static void main( String args[] )
+	{
+		BoardGameRunner run = new BoardGameRunner();
 	}
 }

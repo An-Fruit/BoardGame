@@ -3,8 +3,8 @@ public class landUnit extends Unit{
 
 	
 	
-	public landUnit(Player p, Tile pl, String c) {
-		super(p, pl);
+	public landUnit(char p, Tile pl, String c) {
+		super(p, pl, new Point(0,0));
 	}
 	
 	public void reset() {
@@ -16,7 +16,7 @@ public class landUnit extends Unit{
 			try {
 				if (t.occupier == null) {
 					t.occupier = this;
-					this.place = null;
+					this.place = t;
 				}
 			}
 			catch (Exception e) {

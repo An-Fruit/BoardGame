@@ -5,8 +5,8 @@ public class seaUnit extends Unit{
 	public boolean isConvoy;
 	public boolean hasMoved;
 	
-	public seaUnit(Player p, Tile pl, String c) {
-		super(p, pl);	
+	public seaUnit(char p, Tile pl) {
+		super(p, pl, new Point(0,0));	
 		isConvoy = false;
 	}
 	
@@ -16,19 +16,27 @@ public class seaUnit extends Unit{
 	
 	
 	public void move(Tile t) {
+		
+		
 		try {
+			
+			//if the tile is a coastal tile and there are no occupiers, the tile's occupier automatically becomes this unit
 			if (t instanceof landTile && ((landTile) t).isCoast && t.occupier == null) {
 				t.occupier = this;
-				this.place = null;
+				this.place = t;
 			}
+			
+			//same with above, but with sea tiles
 			else if (t instanceof seaTile && t.occupier == null) {
 				t.occupier = this;
 				this.place.occupier = null;
-				this.place = null;
+				this.place = t;
 			}
 		}
 		catch (Exception e) {
+			//the tile you are trying to move into is already occupied, and they have greater strength
 			if (t.occupier.strength >= this.strength) {
+				System.out.print("you cannot move");
 			}
 			
 		}
