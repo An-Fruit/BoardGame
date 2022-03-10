@@ -30,7 +30,6 @@ public class seaUnit extends Unit{
 		catch (Exception e) {
 			if (t.occupier.strength >= this.strength) {
 			}
-			else
 			
 		}
 	}
