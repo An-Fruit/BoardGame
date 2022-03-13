@@ -15,9 +15,9 @@ import static java.util.Arrays.*;
 
 public class BoardGameRunner extends JFrame
 {
-	private static final int WIDTH = 1000;
-	private static final int HEIGHT = 1000;
-
+	// initializes graphics
+	public static int WIDTH = 1440;
+	public static int HEIGHT = 900;
 	public BoardGameRunner()
 	{
 		super("Board Game Runner");
