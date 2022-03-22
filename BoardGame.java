@@ -17,44 +17,29 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	private ArrayList<Tile> TileList;
 	public ArrayList<Integer> xloc;
 	public ArrayList<Integer> yloc;
-	HashMap<Character, Player> playerMap;
-	char[] playerID;
-	int round;
-	boolean endGame;
-	char winnerID;
 	// constructor
 	public BoardGame() {
-	
 		setBackground(Color.WHITE);
 		addMouseListener(this);
 
 		TileList = new ArrayList<>();
 		xloc = new ArrayList<>();
 		yloc = new ArrayList<>();
-		playerMap = new HashMap<>();
 		
-		playerID = new char[3];
-		endGame = false;
-		round = 0;
 		
-		Scanner f = new Scanner(System.in);
-		System.out.println("How many players would you like to have in this game? (3-6 allowed)");
-		int temp = f.nextInt();
-		if(temp >= 3 && temp <= 7) playerID = new char[temp];
-		for(int i = 0; i < temp; i++) {
-			playerID[i] = (char)(i + 65);
-		}
 		
-		System.out.println("playerID's: " + Arrays.toString(playerID));
+		////////////   ADDING ALL TILES IN THE GAME ////////////
+		
+		
 		
 		landTile Petrograd = new landTile(new int[] {989, 988, 864, 742, 672, 641, 669, 673, 632, 667, 988},
 									new int[] {185, 5, 4, 188, 129, 131, 250, 287, 315, 355, 183}, 
 									11, true, true);
 		TileList.add(Petrograd);
 		
-		landTile Baltic_States = new landTile(new int[] {593, 642, 662, 621, 598, 599, 566, 580, 595, 615, 595},
-				new int[] {318, 327, 359, 449, 439, 417, 359, 346, 359, 353, 321}, 
-				11, true, false);
+		landTile Baltic_States = new landTile(new int[] {595, 646, 666, 660, 660, 620, 597, 599, 589, 581, 578, 565, 565, 583, 594},
+				new int[] {320, 327, 356, 372, 434, 453, 441, 415, 408, 411, 397, 385, 362, 345, 360}, 
+				15, true, false);
 		TileList.add(Baltic_States);
 		
 		landTile Moscow = new landTile(new int[] {990, 668, 659, 622, 630, 763, 895, 991, 989},
@@ -97,14 +82,14 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 				20, true, true);
 		TileList.add(Sweden);
 		
-		landTile Finland = new landTile(new int[] {638, 630, 667, 658, 569, 573, 565, 564, 609, 590, 583, 563, 578, 600, 636},
-				new int[] {90, 97, 250, 276, 284, 254, 249, 237, 180, 158, 113, 84, 94, 93, 90}, 
-				15, true, false);
+		landTile Finland = new landTile(new int[] {590, 608, 563, 563, 573, 569, 597, 654, 665, 630, 639, 601, 601, 579, 555, 582, 589, },
+				new int[] {160, 180, 237, 247, 255, 282, 297, 276, 249, 97, 88, 72, 91, 90, 89, 109, 162, }, 
+				17, true, false);
 		TileList.add(Finland);
 		
-		landTile Norway = new landTile(new int[] {648, 640, 599, 598, 580, 560, 552, 554, 479, 448, 438, 402, 394, 377, 417, 431, 526, 589, 625, 626, 638, 638, 646},
-				new int[] {73, 87, 68, 89, 90, 77, 92, 95, 206, 315, 304, 325, 325, 314, 224, 225, 86, 50, 58, 51, 54, 67, 72}, 
-				23, true, true);
+		landTile Norway = new landTile(new int[] {381, 376, 399, 437, 448, 478, 527, 559, 556, 565, 577, 599, 600, 640, 651, 642, 642, 625, 624, 591, 525, 432, 416, 382},
+				new int[] {242, 313, 328, 305, 317, 207, 107, 95, 91, 80, 90, 90, 69, 88, 71, 67, 52, 48, 58, 48, 81, 222, 221, 244}, 
+				24, true, true);
 		TileList.add(Norway);
 		
 		landTile Denmark = new landTile(new int[] {428, 428, 437, 448, 454, 443, 432, 419, 419, 396, 402, 427},
@@ -132,9 +117,9 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 				15, true, true);
 		TileList.add(Kiel);
 		
-		landTile Bavaria = new landTile(new int[] {458, 428, 433, 436, 372, 357, 341, 344, 393, 429, 458},
-				new int[] {489, 515, 542, 582, 573, 576, 572, 551, 511, 493, 490}, 
-				11, false, true);
+		landTile Bavaria = new landTile(new int[] {468, 458, 429, 431, 451, 436, 388, 380, 356, 339, 342, 361, 377, 391, 427, 456, 468, },
+				new int[] {507, 514, 513, 537, 557, 577, 578, 573, 573, 566, 547, 538, 509, 502, 492, 489, 509, }, 
+				17, false, true);
 		TileList.add(Bavaria);
 		
 		landTile Hungary = new landTile(new int[] {502, 527, 551, 569, 612, 640, 640, 662, 657, 599, 595, 527, 525, 511, 502},
@@ -182,15 +167,15 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 				16, true, true);
 		TileList.add(Istanbul);
 		
-		landTile Eastern_Anatolia = new landTile(new int[] {759, 782, 833, 905, 868, 829, 798, 766, 767, 763, 759},
-				new int[] {724, 695, 693, 725, 724, 759, 758, 775, 731, 722, 721}, 
-				11, true, true);
+		landTile Eastern_Anatolia = new landTile(new int[] {757, 780, 816, 907, 904, 866, 829, 802, 768, 759, 764, 765, 761},
+				new int[] {723, 692, 685, 690, 726, 726, 759, 759, 777, 776, 767, 731, 725}, 
+				13, true, true);
 		TileList.add(Eastern_Anatolia);
 		
-		landTile Western_Anatolia = new landTile(new int[] {685, 691, 708, 751, 766, 800, 905, 872, 846, 831, 823, 798, 751, 737, 726, 714, 709, 697, 684, 684},
-				new int[] {778, 777, 784, 779, 781, 763, 730, 790, 811, 810, 826, 834, 843, 843, 837, 837, 822, 823, 805, 778}, 
-				20, true, true);
-		TileList.add(Western_Anatolia);
+		landTile Southern_Anatolia = new landTile(new int[] {907, 921, 886, 873, 845, 833, 824, 798, 778, 765, 751, 734, 726, 712, 706, 695, 684, 683, 693, 706, 751, 766, 800, 829, 867, 902, },
+				new int[]{730, 753, 772, 792, 814, 813, 831, 839, 823, 825, 846, 844, 839, 840, 827, 828, 807, 775, 775, 782, 776, 780, 761, 764, 729, 726} , 
+				26, true, true);
+		TileList.add(Southern_Anatolia);
 		
 		landTile Armenia = new landTile(new int[] {908, 935, 990, 990, 919, 908, 908},
 				new int[] {693, 676, 695, 770, 747, 730, 693}, 
@@ -202,8 +187,8 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 				9, false, false);
 		TileList.add(Syria);
 		
-		landTile Rhineland = new landTile(new int[] {346, 379, 359, 344, 338, 337, 342, 345},
-				new int[] {480, 511, 542, 547, 542, 522, 518, 480}, 
+		landTile Rhineland = new landTile(new int[] {345, 336, 338, 336, 341, 381, 394, 350},
+				new int[] {477, 499, 518, 540, 548, 512, 505, 478}, 
 				8, false, false);
 		TileList.add(Rhineland);
 		
@@ -222,8 +207,8 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 				7, true, false);
 		TileList.add(Tuscany);
 		
-		landTile Rome = new landTile(new int[] {402, 424, 441, 444, 452, 414, 400},
-				new int[] {702, 692, 711, 711, 722, 726, 702}, 
+		landTile Rome = new landTile(new int[] {398, 425, 446, 454, 440, 412, 398, },
+				new int[] {702, 691, 710, 724, 734, 727, 704, }, 
 				7, true, true);
 		TileList.add(Rome);
 		
@@ -232,8 +217,8 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 				6, true, true);
 		TileList.add(Napoli);
 		
-		landTile Sicily = new landTile(new int[] {475, 498, 504, 483, 460, 455, 444, 403, 410, 431, 461, 467, 477, 498},
-				new int[] {780, 779, 788, 818, 817, 844, 843, 815, 805, 811, 808, 810, 797, 780}, 
+		landTile Sicily = new landTile(new int[] {476, 502, 507, 483, 470, 458, 456, 444, 399, 408, 434, 458, 467, 474, },
+				new int[] {780, 780, 791, 819, 819, 819, 843, 845, 814, 805, 810, 808, 808, 780, }, 
 				14, true, false);
 		TileList.add(Sicily);
 		
@@ -246,7 +231,6 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 				new int[] {511, 541, 551, 571, 601, 601, 621, 604, 539, 514, 515}, 
 				8, true, false);
 		TileList.add(Burgundy);
-		
 		
 		landTile Netherlands = new landTile(new int[] {311, 331, 334, 344, 362, 365, 342, 328, 310},
 				new int[] {472, 483, 494, 473, 464, 437, 433, 443, 469}, 
@@ -333,7 +317,98 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 				13, true, true);
 		TileList.add(Tunis);
 		
-	
+		seaTile Barents_Sea = new seaTile(new int[] {591, 862, 839, 836, 824, 799, 779, 760, 779, 768, 746, 765, 756, 724, 693, 689, 747, 747, 652, 643, 623, 621, 591},
+				new int[] {4, 3, 46, 22, 22, 87, 62, 64, 107, 107, 139, 156, 165, 153, 139, 124, 117, 93, 65, 52, 47, 52, 44}, 
+				23);
+		TileList.add(Barents_Sea);
+		
+		seaTile Norwegian_Sea = new seaTile(new int[] {587, 242, 236, 259, 259, 256, 248, 260, 271, 273, 285, 306, 380, 417, 429, 523, 588},
+				new int[] {4, 6, 279, 277, 290, 293, 300, 301, 306, 277, 258, 240, 238, 220, 220, 79, 44}, 
+				17);
+		TileList.add(Norwegian_Sea);
+		
+		seaTile North_Atlantic = new seaTile(new int[] {238, 0, 0, 87, 105, 99, 103, 113, 124, 113, 121, 123, 145, 167, 188, 190, 204, 204, 204, 222, 221, 237},
+				new int[] {4, 4, 432, 432, 412, 393, 383, 383, 368, 362, 356, 342, 346, 333, 336, 356, 354, 330, 309, 297, 288, 275}, 
+				22);
+		TileList.add(North_Atlantic);
+		
+		seaTile Irish_Sea = new seaTile(new int[] {188, 218, 218, 193, 203, 186, 203, 190, 163, 139, 94, 108, 133, 158, 177, 188},
+				new int[] {360, 368, 390, 407, 414, 427, 445, 445, 458, 478, 433, 416, 407, 411, 364, 358}, 
+				16);
+		TileList.add(Irish_Sea);
+		
+		seaTile English_Channel = new seaTile(new int[] {281, 304, 281, 246, 243, 235, 225, 217, 205, 185, 163, 140, 163, 187, 198, 261, 274, 274, 265},
+				new int[] {452, 474, 475, 497, 503, 504, 489, 489, 514, 502, 503, 481, 463, 471, 463, 473, 468, 465, 464}, 
+				19);
+		TileList.add(English_Channel);
+		
+		seaTile North_Sea = new seaTile(new int[] {378, 305, 276, 275, 281, 262, 266, 268, 275, 273, 284, 287, 286, 306, 325, 338, 340, 395, 400, 388, 372},
+				new int[] {244, 246, 279, 311, 315, 345, 359, 380, 387, 418, 422, 431, 450, 471, 442, 433, 375, 374, 358, 353, 314}, 
+				21);
+		TileList.add(North_Sea);
+		
+		seaTile Heligoland = new seaTile(new int[] {343, 396, 393, 394, 381, 374, 366, 341, 342},
+				new int[] {376, 375, 403, 431, 435, 429, 435, 432, 432}, 
+				9);
+		TileList.add(Heligoland);
+		
+		seaTile Skagerrak = new seaTile(new int[] {437, 449, 454, 437, 430, 430, 402, 390, 391, 403, 436},
+				new int[] {307, 322, 381, 382, 376, 348, 354, 353, 330, 330, 308}, 
+				9);
+		TileList.add(Skagerrak);
+		
+		seaTile South_Baltic = new seaTile(new int[] {417, 420, 420, 433, 457, 467, 468, 479, 497, 532, 533, 548, 560, 566, 561, 561, 573, 507, 496, 478, 472, 455, 446, 432},
+				new int[] {406, 424, 428, 435, 420, 419, 431, 433, 428, 416, 425, 415, 411, 400, 390, 355, 347, 345, 386, 391, 400, 398, 408, 408}, 
+				24);
+		TileList.add(South_Baltic);
+		
+		seaTile Gulf_Of_Bothinia = new seaTile(new int[] {653, 598, 568, 569, 560, 604, 590, 576, 565, 571, 523, 519, 527, 537, 536, 506, 581, 593, 590, 600, 645, 665, 653, },
+				new int[] {280, 299, 285, 258, 237, 183, 165, 164, 183, 196, 238, 284, 284, 297, 318, 342, 344, 356, 319, 308, 305, 289, 279, }, 
+				23);
+		
+		TileList.add(Gulf_Of_Bothinia);
+		
+		seaTile Bay_Of_Biscay = new seaTile(new int[] {0, 89, 160, 158, 199, 178, 52, 50, 18, 11, 16, 6, 22, 35, 53, 52, 45, 21, 0, 0, },
+				new int[] {437, 437, 504, 517, 574, 632, 600, 632, 682, 684, 724, 735, 747, 746, 777, 784, 785, 823, 823, 443, }, 
+				20);
+		TileList.add(Bay_Of_Biscay);
+		
+		seaTile Gulf_Of_Lyon = new seaTile(new int[] {252, 255, 273, 296, 337, 354, 375, 384, 363, 343, 342, 354, 351, 330, 331, 249, 237, 231, 182, 207, 234, 252, },
+				new int[] {685, 664, 657, 670, 663, 653, 656, 683, 682, 688, 714, 724, 726, 736, 743, 742, 734, 743, 742, 700, 697, 686, }, 
+				22);
+		TileList.add(Gulf_Of_Lyon);
+		
+		seaTile Western_Mediterranean = new seaTile(new int[]{55, 55, 65, 71, 123, 153, 176, 246, 325, 336, 341, 349, 354, 337, 330, 328, 248, 232, 226, 188, 162, 140, 128, 55 },
+				new int[] {780, 786, 788, 815, 825, 818, 811, 810, 825, 824, 819, 817, 779, 786, 774, 743, 744, 752, 745, 745, 767, 767, 784, 780,  }, 
+				24);
+		TileList.add(Western_Mediterranean);
+		
+		seaTile Tyrranean_Sea = new seaTile(new int[]{362, 398, 394, 410, 438, 450, 473, 467, 437, 412, 377, 364, 358, 356, 366, 361, 355, 362, 366, },
+				new int[]{686, 698, 702, 727, 737, 758, 778, 803, 807, 803, 834, 833, 820, 779, 743, 724, 724, 712, 684, }, 
+				19);
+		TileList.add(Tyrranean_Sea);
+		
+		seaTile Ionian_Sea = new seaTile(new int[]{372, 400, 441, 458, 460, 509, 498, 500, 504, 523, 545, 552, 557, 571, 574, 606, 620, 617, 651, 651, 389, 373, 384,},
+				new int[] {850, 814, 845, 848, 823, 791, 773, 768, 764, 767, 758, 772, 776, 800, 818, 848, 862, 864, 879, 898, 896, 886, 870,}, 
+				22);
+		TileList.add(Ionian_Sea);
+		
+		seaTile Aegean = new seaTile(new int[]{625, 670, 668, 681, 677, 694, 708, 709, 678, 673, 667, 628, 615, 608, 632, 633, 612, 612, 602, 604, 620, 624, },
+				new int[] {751, 740, 774, 803, 807, 827, 828, 835, 870, 863, 861, 861, 854, 827, 819, 807, 784, 781, 764, 759, 765, 747, }, 
+				22);
+		TileList.add(Aegean);
+		
+		seaTile Eastern_Mediterranean = new seaTile(new int[] {710, 679, 679, 652, 805, 846, 864, 865, 851, 852, 861, 845, 832, 823, 765, 750, 711, },
+				new int[] {842, 870, 873, 896, 892, 880, 879, 841, 836, 823, 798, 808, 809, 826, 820, 843, 837 }, 
+				17);
+		TileList.add(Eastern_Mediterranean);
+		
+		seaTile Black_Sea = new seaTile(new int[] {717, 747, 751, 775, 759, 775, 775, 799, 801, 828, 836, 924, 934, 910, 835, 821, 782, 754, 723, 713, 693, 688, 704, 718, 716, },
+				new int[] {625, 595, 601, 605, 619, 627, 631, 640, 627, 616, 614, 639, 655, 689, 690, 681, 690, 720, 721, 721, 712, 694, 671, 638, 623, }, 
+				25);
+		TileList.add(Black_Sea);
+		
+		
 		
 		new Thread(this).start();
 	}
@@ -341,42 +416,20 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	// paints the Diplomap onto graphics
 	public void paint( Graphics window )
 	{
-		for(char c : playerMap.keySet()) {
-			if(playerMap.get(c).hubCnt > 32/playerID.length) {
-				endGame = true;
-				winnerID = c;
-				break;
-			}
-			
-		}
-		
-		int mouseX = MouseInfo.getPointerInfo().getLocation().x;
-		int mouseY = MouseInfo.getPointerInfo().getLocation().y;
+
+		Graphics2D g2 = (Graphics2D) window;
+
 		
 		Image map = Toolkit.getDefaultToolkit().getImage("DiploMap.png");
 		
-		window.drawImage(map, 0, 0, 990, 900, this);
+		g2.drawImage(map, 0, 0, 990, 900, this);
 		
-		window.drawString(mouseX+ " " + mouseY,900 , 100);
-		
-		window.drawString(round + "", 950, 950);
-		
-	
-		
-		for (Tile t: TileList) {
-			if(t.isInside(mouseX, mouseY)) {
-				window.setColor(new Color(255,0,0,100));
-				window.fillPolygon(t.collisionhull);
-				
-			}
-//			window.drawPolygon(t.collisionhull);
-		}
-
-		
-		
-		
+		window.drawString(MouseInfo.getPointerInfo().getLocation().x+ " " + MouseInfo.getPointerInfo().getLocation().y,900 , 100);
 		
 //		
+		for (Tile t: TileList) {
+			g2.drawPolygon(t.collisionhull);
+		}
 	}
 	
 	
@@ -392,14 +445,22 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 		System.out.println(loc1 + " " + loc2);
 		xloc.add(loc1);
 		yloc.add(loc2);
-		System.out.println(xloc);
-		System.out.println(yloc);
+		System.out.print("{");
+		for (int i: xloc) {
+			System.out.print(i+", ");
+		}
+		System.out.println("}");
+		
+		System.out.print("{");
+		for (int i: yloc) {
+			System.out.print(i+", ");
+		}
+		System.out.println("}");
 		System.out.println(xloc.size());
 		
 	}
 
 	public void mousePressed(MouseEvent e) {
-		
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -417,25 +478,13 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	public void run()
 	{
 		// TODO Auto-generated method
-		
-		//32 hub tiles
-//		int tiles = 0;
-//		for(Tile t : TileList) {
-//			if (t.isHub == true) tiles++;
-//		}
-//		System.out.println(tiles);
-		
 		try
 		{
-			while(!endGame)
-			{
-			
-			   
+			while( true )
+			{	
 			   Thread.sleep(100);
 			   repaint();
 			}
-
-			
 		}
 		catch( Exception e )
 		{
