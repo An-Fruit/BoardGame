@@ -8,7 +8,8 @@ public class Tile{
 	Unit occupier;
 	Point loc;
 	ArrayList<Tile> adjacencyList;
-	
+	int[] RGB;
+	boolean isHub;
 	
 	public Tile(int[] x, int[] y, int numberofpoints) {
 		collisionhull = new Polygon(x, y, numberofpoints);

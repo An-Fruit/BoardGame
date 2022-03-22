@@ -17,14 +17,35 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	private ArrayList<Tile> TileList;
 	public ArrayList<Integer> xloc;
 	public ArrayList<Integer> yloc;
+	HashMap<Character, Player> playerMap;
+	char[] playerID;
+	int round;
+	boolean endGame;
+	char winnerID;
 	// constructor
 	public BoardGame() {
+	
 		setBackground(Color.WHITE);
 		addMouseListener(this);
 
 		TileList = new ArrayList<>();
 		xloc = new ArrayList<>();
 		yloc = new ArrayList<>();
+		playerMap = new HashMap<>();
+		
+		playerID = new char[3];
+		endGame = false;
+		round = 0;
+		
+		Scanner f = new Scanner(System.in);
+		System.out.println("How many players would you like to have in this game? (3-6 allowed)");
+		int temp = f.nextInt();
+		if(temp >= 3 && temp <= 7) playerID = new char[temp];
+		for(int i = 0; i < temp; i++) {
+			playerID[i] = (char)(i + 65);
+		}
+		
+		System.out.println("playerID's: " + Arrays.toString(playerID));
 		
 		landTile Petrograd = new landTile(new int[] {989, 988, 864, 742, 672, 641, 669, 673, 632, 667, 988},
 									new int[] {185, 5, 4, 188, 129, 131, 250, 287, 315, 355, 183}, 
@@ -320,77 +341,42 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	// paints the Diplomap onto graphics
 	public void paint( Graphics window )
 	{
+		for(char c : playerMap.keySet()) {
+			if(playerMap.get(c).hubCnt > 32/playerID.length) {
+				endGame = true;
+				winnerID = c;
+				break;
+			}
+			
+		}
+		
+		int mouseX = MouseInfo.getPointerInfo().getLocation().x;
+		int mouseY = MouseInfo.getPointerInfo().getLocation().y;
+		
+		Image map = Toolkit.getDefaultToolkit().getImage("DiploMap.png");
+		
+		window.drawImage(map, 0, 0, 990, 900, this);
+		
+		window.drawString(mouseX+ " " + mouseY,900 , 100);
+		
+		window.drawString(round + "", 950, 950);
+		
+	
+		
+		for (Tile t: TileList) {
+			if(t.isInside(mouseX, mouseY)) {
+				window.setColor(new Color(255,0,0,100));
+				window.fillPolygon(t.collisionhull);
+				
+			}
+//			window.drawPolygon(t.collisionhull);
+		}
 
-		Graphics2D g2 = (Graphics2D) window;
-		
-		g2.drawPolygon(TileList.get(0).collisionhull);
-		g2.drawPolygon(TileList.get(1).collisionhull);
-		g2.drawPolygon(TileList.get(2).collisionhull);
-		g2.drawPolygon(TileList.get(3).collisionhull);
-		g2.drawPolygon(TileList.get(4).collisionhull);
-		g2.drawPolygon(TileList.get(5).collisionhull);
-		g2.drawPolygon(TileList.get(6).collisionhull);
-		g2.drawPolygon(TileList.get(7).collisionhull);
-		g2.drawPolygon(TileList.get(8).collisionhull);
-		g2.drawPolygon(TileList.get(9).collisionhull);
-		g2.drawPolygon(TileList.get(10).collisionhull);
-		g2.drawPolygon(TileList.get(11).collisionhull);
-		g2.drawPolygon(TileList.get(12).collisionhull);
-		g2.drawPolygon(TileList.get(13).collisionhull);
-		g2.drawPolygon(TileList.get(14).collisionhull);
-		g2.drawPolygon(TileList.get(15).collisionhull);
-		g2.drawPolygon(TileList.get(16).collisionhull);
-		g2.drawPolygon(TileList.get(17).collisionhull);
-		g2.drawPolygon(TileList.get(18).collisionhull);
-		g2.drawPolygon(TileList.get(19).collisionhull);
-		g2.drawPolygon(TileList.get(20).collisionhull);
-		g2.drawPolygon(TileList.get(21).collisionhull);
-		g2.drawPolygon(TileList.get(22).collisionhull);
-		g2.drawPolygon(TileList.get(23).collisionhull);
-		g2.drawPolygon(TileList.get(24).collisionhull);
-		g2.drawPolygon(TileList.get(25).collisionhull);
-		g2.drawPolygon(TileList.get(26).collisionhull);
-		g2.drawPolygon(TileList.get(27).collisionhull);
-		g2.drawPolygon(TileList.get(28).collisionhull);
-		g2.drawPolygon(TileList.get(29).collisionhull);
-		g2.drawPolygon(TileList.get(30).collisionhull);
-		g2.drawPolygon(TileList.get(31).collisionhull);
-		g2.drawPolygon(TileList.get(32).collisionhull);
-		g2.drawPolygon(TileList.get(33).collisionhull);
-		g2.drawPolygon(TileList.get(34).collisionhull);
-		g2.drawPolygon(TileList.get(35).collisionhull);
-		g2.drawPolygon(TileList.get(36).collisionhull);
-		g2.drawPolygon(TileList.get(37).collisionhull);
-		g2.drawPolygon(TileList.get(38).collisionhull);
-		g2.drawPolygon(TileList.get(39).collisionhull);
-		g2.drawPolygon(TileList.get(40).collisionhull);
-		g2.drawPolygon(TileList.get(41).collisionhull);
-		g2.drawPolygon(TileList.get(42).collisionhull);
-		g2.drawPolygon(TileList.get(43).collisionhull);
-		g2.drawPolygon(TileList.get(44).collisionhull);
-		g2.drawPolygon(TileList.get(45).collisionhull);
-		g2.drawPolygon(TileList.get(46).collisionhull);
-		g2.drawPolygon(TileList.get(47).collisionhull);
-		g2.drawPolygon(TileList.get(48).collisionhull);
-		g2.drawPolygon(TileList.get(49).collisionhull);
-		g2.drawPolygon(TileList.get(50).collisionhull);
-		g2.drawPolygon(TileList.get(51).collisionhull);
-		g2.drawPolygon(TileList.get(52).collisionhull);
-		g2.drawPolygon(TileList.get(53).collisionhull);
-		g2.drawPolygon(TileList.get(54).collisionhull);
-		g2.drawPolygon(TileList.get(55).collisionhull);
-		g2.drawPolygon(TileList.get(56).collisionhull);
 		
 		
-
-//
-//		Image map = Toolkit.getDefaultToolkit().getImage("DiploMap.png");
+		
+		
 //		
-//		g2.drawImage(map, 0, 0, 990, 900, this);
-//		
-//		window.drawString(MouseInfo.getPointerInfo().getLocation().x+ " " + MouseInfo.getPointerInfo().getLocation().y,900 , 100);
-//		
-////		
 	}
 	
 	
@@ -413,6 +399,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	}
 
 	public void mousePressed(MouseEvent e) {
+		
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -430,13 +417,25 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	public void run()
 	{
 		// TODO Auto-generated method
+		
+		//32 hub tiles
+//		int tiles = 0;
+//		for(Tile t : TileList) {
+//			if (t.isHub == true) tiles++;
+//		}
+//		System.out.println(tiles);
+		
 		try
 		{
-			while( true )
-			{	
+			while(!endGame)
+			{
+			
+			   
 			   Thread.sleep(100);
 			   repaint();
 			}
+
+			
 		}
 		catch( Exception e )
 		{
