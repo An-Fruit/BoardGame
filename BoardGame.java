@@ -5,13 +5,15 @@ import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.Polygon;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class BoardGame extends JPanel implements MouseListener, Runnable{
+public class BoardGame extends JPanel implements MouseListener, Runnable, KeyListener{
 	
 
 	private ArrayList<Tile> TileList;
@@ -25,19 +27,18 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	char winnerID;
 	// constructor
 	public BoardGame() {
-	
+		//interface stuff w/keyboard & mouse input
 		setBackground(Color.WHITE);
 		addMouseListener(this);
-
+		addKeyListener(this);
+		
+		//list of tiles & players by playerID
 		TileList = new ArrayList<>();
-		xloc = new ArrayList<>();
-		yloc = new ArrayList<>();
 		playerMap = new HashMap<>();
 		
-		playerID = new char[3];
 		endGame = false;
 		year = 1901;
-		turn = 0;
+		turn = 1;
 		
 		Scanner f = new Scanner(System.in);
 		System.out.println("How many players would you like to have in this game? (3-7 allowed)");
@@ -45,6 +46,10 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 		if(temp >= 3 && temp <= 7) playerID = new char[temp];
 		for(int i = 0; i < temp; i++) {
 			playerID[i] = (char)(i + 65);
+		}
+		for(int i = 0; i < playerID.length; i++) {
+			System.out.println("What is Player " + (i + 1) + "'s name?");
+			playerMap.put(playerID[i], new Player(f.next()));
 		}
 		
 		System.out.println("playerID's: " + Arrays.toString(playerID));
@@ -443,25 +448,11 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	{
 		//print year and turn for debug purposes
 		//System.out.println("yr: " + year + " turn: " + turn); 
-		if(year > 1980) {
-			endGame = true;
-			return;
-		}
-		//if all players have gone, the "year" advances
-		if(turn > playerID.length) {
-			turn = 0;
-			year++;
-		}
+		
 		
 		
 		//checks all the players to see if one of them has won through controlling most supply hubs
-		for(char c : playerMap.keySet()) {
-			if(playerMap.get(c).hubCnt > 16) {
-				endGame = true;
-				winnerID = c;
-				return;
-			}
-		}
+		
 		
 		
 		
@@ -491,22 +482,27 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 			if(t.isInside(mouseX, mouseY)) {
 				
 				Color color = new Color(255,255,255,50);
-				switch(turn % 10) {
-				case 0: color = new Color(255, 0, 0, 100);
+				switch(turn) {
+				//red
+				case 1: color = new Color(255, 0, 0, 100);
 						break;
-				case 1: color = new Color(0,255,0,100);
+				//green
+				case 2: color = new Color(0,255,0,100);
 						break;
-				case 2: color = new Color(0,0,255,100);
+						
+				//blue
+				case 3: color = new Color(0,0,255,100);
 						break;
-				case 3: color = new Color(255,200,0,100);
+				//
+				case 4: color = new Color(255,200,0,100);
 						break;
-				case 4: color = new Color(175,0,255,100);
+				case 5: color = new Color(175,0,255,100);
 						break;
-				case 5: color = new Color(0,255,60,100);
+				case 6: color = new Color(0,255,60,100);
 						break;
-				case 6: color = new Color(250,250,60,100);
+				case 7: color = new Color(250,250,60,100);
 						break;
-				case 7: color = new Color(0,255,255,100);
+				case 8: color = new Color(0,255,255,100);
 						break;
 				}
 				
@@ -524,15 +520,37 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 	}
 	//on click, figure out the x/y values and iterate the turns
 	public void mouseClicked(MouseEvent e) {
+		//since you only need to check when someone wins when the mouse is pressed, game logic is here
+		
+		//if there have been too many yeaers, the game ends
+		if(year > 1980) {
+			endGame = true;
+			return;
+		}
+		//if all players have gone, the "year" advances
+		if(turn == playerID.length) {
+			turn = 0;
+			year++;
+		}
+		
+		
+		//checks all players to see whether one of them has controlled the majority of supply hubs and therefore won
+		for(char c : playerMap.keySet()) {
+			if(playerMap.get(c).hubCnt > 16) {
+				endGame = true;
+				winnerID = c;
+				return;
+			}
+		}
+		System.out.println("Year: " + year + " Turn: " + (turn));
+		System.out.println(playerMap.get(playerID[turn]));
+		//increases the turn after the button has been pressed
+		
+		
 		turn++;
-		int loc1 = MouseInfo.getPointerInfo().getLocation().x;
-		int loc2 = MouseInfo.getPointerInfo().getLocation().y;
-		System.out.println(loc1 + " " + loc2);
-		xloc.add(loc1);
-		yloc.add(loc2);
-		System.out.println(xloc);
-		System.out.println(yloc);
-		System.out.println(xloc.size());
+//		int loc1 = MouseInfo.getPointerInfo().getLocation().x;
+//		int loc2 = MouseInfo.getPointerInfo().getLocation().y;
+//		System.out.println(loc1 + " " + loc2);
 		
 	}
 
@@ -552,6 +570,29 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 		// TODO Auto-generated method stub
 	}
 	 
+	
+
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void run()
 	{
 		// TODO Auto-generated method
@@ -570,7 +611,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable{
 		{
 			while(!endGame)
 			{
-				System.out.println("yr: " + year + " turn: " + turn);
+				
 				Thread.sleep(100);
 				repaint();
 			}

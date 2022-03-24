@@ -15,5 +15,12 @@ public class Player {
 		hubCnt = 0;
 	}
 	
+	public String toString(){
+		String s = "";
+		s += "Player Name: " + name + " ";
+		s+= "Troops: " + army.size() + " ";
+		s+= "Ships: " + fleet.size() + " ";
+		return s;
+	}
 
 }
