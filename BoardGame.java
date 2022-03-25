@@ -25,6 +25,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 	int year;
 	boolean endGame;
 	char winnerID;
+	Tile cur;
 	
 	
 
@@ -58,6 +59,8 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			
 			if(t.isInside(mouseX, mouseY)) {
 				
+				cur = t;
+				
 				Color color = new Color(255,255,255,50);
 				switch(turn) {
 				//red
@@ -86,6 +89,9 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			
 				window.setColor(color);
 				window.fillPolygon(t.collisionhull);
+				for (Tile til: cur.adjacencyList) {
+					window.fillPolygon(til.collisionhull);
+				}
 				
 			}
 			
@@ -625,9 +631,9 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			Black_Sea.addAdj(new Tile[] {East_Ukraine, Romania, Bulgaria, Istanbul, Eastern_Anatolia, Armenia,});
 			Istanbul.addAdj(new Tile[] {Eastern_Anatolia, Southern_Anatolia, Black_Sea, Bulgaria, Aegean});
 			Eastern_Anatolia.addAdj(new Tile[] {Southern_Anatolia, Istanbul, Black_Sea, Armenia});
-			Southern_Anatolia.addAdj(new Tile[] {Aegean, Eastern_Mediterranean, Syria, Armenia, Istanbul});
+			Southern_Anatolia.addAdj(new Tile[] {Eastern_Anatolia, Aegean, Eastern_Mediterranean, Syria, Armenia, Istanbul});
 			Syria.addAdj(new Tile[] {Armenia, Southern_Anatolia, Eastern_Mediterranean, });
-			West_Ukraine.addAdj(new Tile[] {East_Ukraine, Moscow, Poland});
+			West_Ukraine.addAdj(new Tile[] {East_Ukraine, Moscow, Poland, Romania, Galicia});
 			Romania.addAdj(new Tile[] {Galicia, Hungary, West_Ukraine, Black_Sea, Bulgaria, Serbia, East_Ukraine});
 			Bulgaria.addAdj(new Tile[] {Istanbul, Black_Sea, Romania, Serbia, Greece, Aegean});
 			Greece.addAdj(new Tile[] {Bulgaria, Aegean, Serbia, Albania, Ionian_Sea,});
@@ -637,7 +643,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			Albania.addAdj( new Tile[] {Serbia, Greece, Adriatic, Ionian_Sea, Trieste,});
 			Serbia.addAdj(new Tile[] {Greece, Albania, Romania, Bulgaria, Hungary, Trieste});
 			Hungary.addAdj(new Tile[] {Galicia, Trieste, Serbia, Romania, Galicia, Vienna});
-			Galicia.addAdj(new Tile[] { Poland, Hungary, Czechia, Silesia, Romania,Trieste, Vienna});
+			Galicia.addAdj(new Tile[] {West_Ukraine, Poland, Hungary, Czechia, Silesia, Romania,Trieste, Vienna});
 			Poland.addAdj(new Tile[] {West_Ukraine, Silesia, Prussia, Baltic_States, Moscow, Galicia});
 			Prussia.addAdj(new Tile[] {Poland, Baltic_States, South_Baltic, Berlin, Silesia});
 			South_Baltic.addAdj(new Tile[] {Prussia, Gulf_Of_Bothnia, Baltic_States, Denmark, Berlin, Kiel, Sweden});
@@ -645,7 +651,8 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			Barents_Sea.addAdj(new Tile[] {Norwegian_Sea, Norway, Petrograd});
 			Finland.addAdj(new Tile[] {Sweden, Norway, Gulf_Of_Bothnia, Petrograd,});
 			Silesia.addAdj(new Tile[] {Berlin, Czechia, Galicia, Poland, Bavaria,Prussia});
-			Sweden.addAdj(new Tile[] {Finland, Gulf_Of_Bothnia, Norway, Denmark, Skagerrak});
+			Berlin.addAdj(new Tile[] {Prussia, Silesia, Kiel, South_Baltic, Bavaria});
+			Sweden.addAdj(new Tile[] {Finland, Gulf_Of_Bothnia, Norway, Denmark, Skagerrak, South_Baltic});
 			Norwegian_Sea.addAdj(new Tile[] {Barents_Sea, Norway, North_Atlantic, Clyde, Edinburgh, North_Sea});
 			Norway.addAdj(new Tile[] {Finland, Sweden, North_Sea, Norwegian_Sea, Barents_Sea, Petrograd, Skagerrak});
 			North_Sea.addAdj(new Tile[] {Norwegian_Sea, Edinburgh, York, London, English_Channel, Heligoland, Skagerrak, Netherlands, Amsterdam, Norway, Denmark});
@@ -657,10 +664,10 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			Czechia.addAdj(new Tile[] {Bavaria, Vienna, Silesia, Tyrol, Galicia});
 			Vienna.addAdj(new Tile[] {Hungary, Trieste, Tyrol, Czechia, Galicia});
 			Tyrol.addAdj(new Tile[] {Bavaria, Czechia, Vienna, Venice, Piedmont});
-			Trieste.addAdj(new Tile[] {Serbia, Albania, Hungary, Tyrol, Venice, Vienna});
+			Trieste.addAdj(new Tile[] {Tyrranean_Sea, Serbia, Albania, Hungary, Tyrol, Venice, Vienna});
 			Venice.addAdj(new Tile[] {Trieste, Tyrol, Aputia, Piedmont, Rome, Tuscany, Adriatic});
 			Aputia.addAdj(new Tile[] {Venice, Rome, Sicily, Adriatic, Napoli, Ionian_Sea});
-			Napoli.addAdj(new Tile[] {Tyrranean_Sea, Sicily, Aputia, Rome, });
+			Napoli.addAdj(new Tile[] { Ionian_Sea,Tyrranean_Sea, Sicily, Aputia, Rome, });
 			Sicily.addAdj(new Tile[] {Napoli, Tyrranean_Sea, Ionian_Sea, });
 			Rome.addAdj(new Tile[] {Tyrranean_Sea, Tuscany, Napoli, Venice, Aputia, });
 			Tuscany.addAdj(new Tile[] {Gulf_Of_Lyon, Tyrranean_Sea, Rome, Piedmont, Venice});
@@ -668,7 +675,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			Marseilles.addAdj(new Tile[] {Piedmont, Gulf_Of_Lyon, Burgundy, Gascony, Spain, });
 			Burgundy.addAdj(new Tile[] {Paris, Marseilles, Gascony, Picardy, Amsterdam, Rhineland, Bavaria});
 			Netherlands.addAdj(new Tile[] {Rhineland, Kiel, Amsterdam, Heligoland, North_Sea, });
-			Amsterdam.addAdj(new Tile[] {English_Channel, Netherlands, Picardy, Amsterdam, North_Sea});
+			Amsterdam.addAdj(new Tile[] {Burgundy, Rhineland,English_Channel, Netherlands, Picardy, Amsterdam, North_Sea});
 			Picardy.addAdj(new Tile[] {English_Channel, Brest, Paris, Amsterdam, Burgundy});
 			Paris.addAdj(new Tile[] {Brest, Picardy, Burgundy, Gascony, });
 			Brest.addAdj(new Tile[] {English_Channel, Paris, Bay_Of_Biscay, Gascony, Picardy});
@@ -688,7 +695,12 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			Gulf_Of_Lyon.addAdj(new Tile[] {Spain, Tyrranean_Sea, Marseilles, Piedmont , Western_Mediterranean, Tuscany, });
 			Irish_Sea.addAdj(new Tile[] {North_Atlantic, English_Channel, Bay_Of_Biscay, Wales, Liverpool});
 			English_Channel.addAdj(new Tile[] {Brest, Picardy, Bay_Of_Biscay, Wales, North_Sea, London, Amsterdam, Irish_Sea});
-			Heligoland.addAdj(new Tile[] {Netherlands, Kiel, Denmark, North_Sea});
+			Heligoland.addAdj(new Tile[] { Netherlands, Kiel, Denmark, North_Sea});
+			Baltic_States.addAdj(new Tile[] {Petrograd, Gulf_Of_Bothnia, South_Baltic, Prussia, Poland, Moscow});
+			Tyrranean_Sea.addAdj(new Tile[] {Tuscany, Rome, Napoli, Sicily, Gulf_Of_Lyon, Western_Mediterranean, Tunis, Ionian_Sea});
+			Adriatic.addAdj(new Tile[] {Venice, Trieste, Aputia, Albania, Ionian_Sea});
+			Rhineland.addAdj(new Tile[] {Kiel, Bavaria, Netherlands, Amsterdam, Burgundy});
+			Edinburgh.addAdj(new Tile[] {York, Clyde, North_Sea, Norwegian_Sea, Liverpool});
 			
 		/**************************************************************************************************************************************************************************************************************/
 			
