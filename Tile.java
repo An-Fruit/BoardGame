@@ -4,30 +4,35 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class Tile{
+	String name;
 	Polygon collisionhull;
 	Unit occupier;
+	char possessor;
+	
 	Point loc;
-	ArrayList<Tile> adjacencyList;
-	int[] RGB;
+	Tile[] adjacencyList;
 	boolean isHub;
 	
-	public Tile(int[] x, int[] y, int numberofpoints) {
+	public Tile(String name, int[] x, int[] y, int numberofpoints, int ex, int wy) {
+		this.name = name;
 		collisionhull = new Polygon(x, y, numberofpoints);
-		adjacencyList = new ArrayList<>();
+		possessor = 'Z';
+		loc = new Point(ex,wy);
 	}
 	
 	public Tile(int[] x, int[] y, int numberofpoints, Tile[] adj) {
 		collisionhull = new Polygon(x, y, numberofpoints);
-		adjacencyList = new ArrayList<>();
-		for (Tile t: adj) {
-			adjacencyList.add(t);
-		}
+		adjacencyList = adj;
 	}
 	
 	public boolean isInside(int x, int y) {
 		if (collisionhull.contains(x, y)) return true;
 		return false;
 	}	
-	
-
+	public void addAdj(Tile[] adj) {
+		adjacencyList = adj;
+	}
+	public String getName() {
+		return name;
+	}
 }
