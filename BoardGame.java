@@ -24,6 +24,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 	int turn;
 	int year;
 	boolean endGame;
+	boolean setUp;
 	char winnerID;
 	
 	
@@ -92,28 +93,42 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			
 //			window.drawPolygon(t.collisionhull);
 		}
+		
+		
+		//draw the all units on the board
+		for(char c : playerID) {
+			for(landUnit Lu: playerMap.get(c).getArmy()) {
+				Lu.paintComponent(window);
+				
+			}
+			for(seaUnit Su : playerMap.get(c).getFleet()) {
+				Su.paintComponent(window);
+			}
+		}
+		
 
 //		
 	}
 	//on click, figure out the x/y values and iterate the turns
 	public void mouseClicked(MouseEvent e) {
-		//since you only need to check when someone wins when the mouse is pressed, game logic is here
+		//since you only need to check when someone wins when the turn is advanced, game logic is here
 		
 		//if there have been too many years, the game ends
-//		if(year > 1980) {
-//			endGame = true;
-//			return;
-//		}
-		//if all players have gone, the "year" advances
-		if(turn == playerID.length) {
+		if(year > 1980) {
+			endGame = true;
+			return;
+		}
+		if(turn >= playerID.length - 1) {
 			turn = 0;
 			year++;
 		}
 		else {
 			turn++;
 		}
+		//if all players have gone, the "year" advances
 		
 		//checks all players to see whether one of them has controlled the majority of supply hubs and therefore won
+		
 //		for(char c : playerMap.keySet()) {
 //			if(playerMap.get(c).hubCnt > 16) {
 //				endGame = true;
@@ -122,11 +137,12 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 //			}
 //		}
 		
-//		System.out.println("Year: " + year + " Turn: " + (turn));
-//		System.out.println(playerMap.get(playerID[turn]));
-		//increases the turn after the button has been pressed
+		System.out.println("Year: " + year + " Turn: " + turn);
+		System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
+		
 		int loc1 = MouseInfo.getPointerInfo().getLocation().x;
 		int loc2 = MouseInfo.getPointerInfo().getLocation().y;
+		//print the name and location of the selected tile
 		for(Tile t : TileList) {
 			if(t.isInside(loc1, loc2)) {
 				System.out.println(t.getName() + ": " + loc1 + " " + loc2);
@@ -134,6 +150,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			}
 			
 		}
+		
 		
 		
 	}
@@ -158,8 +175,8 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
+	public void keyPressed(KeyEvent e) {
+		
 		
 	}
 
@@ -173,29 +190,18 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	
 	public void run()
 	{
-		// TODO Auto-generated method
-		
-		//32 hub tiles
-//		int tiles = 0;
-//		for(Tile t : TileList) {
-//			if (t.isHub == true) tiles++;
-//		}
-//		System.out.println(tiles);
-		
-		
 		//basically render the game
 		
 		try
 		{
 			while(!endGame)
 			{
-				
 				Thread.sleep(100);
 				repaint();
 			}
@@ -220,10 +226,12 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			TileList = new ArrayList<>();
 			playerMap = new HashMap<>();
 			
+			//initializes the year and the gamestate
+			setUp = true;
 			endGame = false;
 			year = 1901;
-			turn = 1;
 			
+			//asks for the amount of players and the player ID array
 			Scanner f = new Scanner(System.in);
 			System.out.println("How many players would you like to have in this game? (3-7 allowed)");
 			int temp = f.nextInt();
@@ -231,23 +239,33 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			for(int i = 0; i < temp; i++) {
 				playerID[i] = (char)(i + 65);
 			}
+			
+			//gives every player a name
 			for(int i = 0; i < playerID.length; i++) {
 				System.out.println("What is Player " + (i + 1) + "'s name?");
 				playerMap.put(playerID[i], new Player(f.next()));
 			}
-			
-			System.out.println("playerID's: " + Arrays.toString(playerID));
+			f.close();
 			turn = 0;
+			//print the player IDs
+			System.out.println(Arrays.toString(playerID));
+			System.out.println("Pressing any key on the keyboard will advance turns");
 			
 	/*****************************************ADDING TILES************************************************************************************************/
+			ArrayList<Tile> United_Kingdom = new ArrayList<>();
+			ArrayList<Tile> France = new ArrayList<>();
+			ArrayList<Tile> Germany = new ArrayList<>();
+			ArrayList<Tile> Russia = new ArrayList<>();
+			ArrayList<Tile> Ottomans = new ArrayList<>();
+			ArrayList<Tile> Italy = new ArrayList<>();
+			ArrayList<Tile> Austria = new ArrayList<>();
 			
-			
-			System.out.println("playerID's: " + Arrays.toString(playerID));
 			
 			landTile Petrograd = new landTile("Petrograd", new int[] {989, 988, 864, 742, 672, 641, 669, 673, 632, 667, 988},
 					new int[] {185, 5, 4, 188, 129, 131, 250, 287, 315, 355, 183}, 
 					11, true, true,778,251);
 			TileList.add(Petrograd);
+			Russia.add(Petrograd);
 			
 			landTile Baltic_States = new landTile("Baltic_States", new int[] {595, 646, 666, 660, 660, 620, 597, 599, 589, 581, 578, 565, 565, 583, 594},
 			new int[] {320, 327, 356, 372, 434, 453, 441, 415, 408, 411, 397, 385, 362, 345, 360}, 
@@ -258,21 +276,25 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			new int[] {188, 354, 431, 452, 475, 457, 446, 514, 188}, 
 			9, false, true,785,381);
 			TileList.add(Moscow);
+			Russia.add(Moscow);
 			
 			landTile East_Ukraine = new landTile("East_Ukraine", new int[] {989, 988, 936, 929, 835, 862, 791, 808, 826, 795, 764, 779, 750, 714, 703, 693, 750, 767, 778, 895},
 			new int[] {520, 690, 672, 637, 610, 552, 591, 606, 604, 633, 617, 601, 589, 621, 623, 596, 546, 461, 455, 449}, 
 			20, true, true,786,620);
 			TileList.add(East_Ukraine);
+			Russia.add(East_Ukraine);
 			
 			landTile West_Ukraine = new landTile("West_Ukraine", new int[] {630, 624, 655, 662, 669, 688, 703, 706, 746, 762, 631},
 			new int[] {482, 519, 535, 569, 569, 591, 587, 570, 546, 466, 483}, 
 			11, false, false,685,543);
 			TileList.add(West_Ukraine);
+			Russia.add(West_Ukraine);
 			
 			landTile Poland = new landTile("Poland", new int[] {596, 620, 630, 624, 599, 583, 564, 531, 522, 527, 555, 585, 595},
 			new int[] {443, 453, 480, 512, 522, 511, 524, 515, 476, 464, 451, 452, 444}, 
 			13, false, true,560,494);
 			TileList.add(Poland);
+			Russia.add(Poland);
 			
 			landTile Galicia = new landTile("Galicia", new int[] {526, 547, 565, 581, 594, 622, 653, 658, 643, 550, 541, 517, 523},
 			new int[] {539, 520, 526, 514, 523, 522, 539, 587, 591, 549, 544, 547, 539}, 
@@ -493,31 +515,37 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			new int[] {443, 432, 430, 422, 426, 431, 446, 458, 465, 467, 470, 467, 444}, 
 			13, true, true,252,465);
 			TileList.add(London);
+			United_Kingdom.add(London);
 			
 			landTile Wales = new landTile("Wales",new int[] {185, 206, 248, 238, 236, 197, 191, 166, 183, 200, 206},
 			new int[] {417, 416, 432, 444, 466, 461, 469, 460, 450, 452, 444}, 
 			11, true, false,213,457);
 			TileList.add(Wales);
+			United_Kingdom.add(Wales);
 			
 			landTile York = new landTile("York", new int[] {250, 261, 264, 263, 272, 270, 261, 250, 246, 242, 243},
 			new int[] {362, 361, 364, 384, 392, 419, 428, 428, 420, 418, 398}, 
 			11, true, false,252,426);
 			TileList.add(York);
+			United_Kingdom.add(York);
 			
 			landTile Liverpool = new landTile("Liverpool", new int[] {209, 220, 226, 248, 243, 241, 230, 203, 197, 219},
 			new int[] {354, 340, 339, 360, 395, 419, 414, 413, 406, 391}, 
 			10, true, true,227,413);
 			TileList.add(Liverpool);
+			United_Kingdom.add(Liverpool);
 			
 			landTile Edinburgh = new landTile("Edinburgh",new int[] {230, 236, 246, 262, 276, 259, 262, 250, 231},
 			new int[] {340, 316, 305, 307, 316, 345, 357, 360, 342}, 
 			9, true, true,248,347);
 			TileList.add(Edinburgh);
+			United_Kingdom.add(Edinburgh);
 			
 			landTile Clyde = new landTile("Clyde",new int[] {217, 230, 246, 251, 257, 258, 239, 222, 205, 206, 217},
 			new int[] {338, 314, 303, 292, 292, 283, 279, 289, 311, 328, 338}, 
 			11, true, false,222,321);
 			TileList.add(Clyde);
+			United_Kingdom.add(Clyde);
 			
 			landTile Algeria = new landTile("Algeria",new int[] {0, 47, 62, 123, 133, 170, 244, 266, 286, 330, 319, 315, 315, 2},
 			new int[] {825, 790, 790, 828, 812, 813, 812, 821, 819, 829, 836, 883, 897, 895}, 

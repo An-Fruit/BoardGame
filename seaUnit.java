@@ -1,3 +1,6 @@
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
 
 public class seaUnit extends Unit{
 	
@@ -6,13 +9,14 @@ public class seaUnit extends Unit{
 	public boolean hasMoved;
 	
 	public seaUnit(char p, Tile pl) {
-		super(p, pl, new Point(0,0));	
+		super(p, pl);	
 		isConvoy = false;
 	}
 	
 	public void reset() {
 		strength = 1;
 	}
+	
 	
 	
 	public void move(Tile t) {
@@ -50,7 +54,10 @@ public class seaUnit extends Unit{
 		u.strength++;
 	}
 	
-	
+	public void paintComponent(Graphics window) {
+		Image seaunitimg = Toolkit.getDefaultToolkit().getImage("seaUnit.png");
+		window.drawImage(seaunitimg, loc.x, loc.y, loc.x + 5, loc.y + 5, this);
+	}
 	
 	
 	

@@ -14,6 +14,12 @@ public class Player {
 		fleet  = new ArrayList<>();
 		hubCnt = 0;
 	}
+	public ArrayList<seaUnit> getFleet(){
+		return fleet;
+	}
+	public ArrayList<landUnit> getArmy(){
+		return army;
+	}
 	
 	public String toString(){
 		String s = "";
