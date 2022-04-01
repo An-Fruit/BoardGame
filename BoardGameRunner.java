@@ -28,7 +28,9 @@ public class BoardGameRunner extends JFrame
        
 		add(scene);
 		
-		setVisible(true);	
+		setVisible(true);
+		
+		setFocusable(true);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}

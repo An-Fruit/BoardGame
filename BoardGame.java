@@ -23,10 +23,12 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 	char[] playerID;
 	int turn;
 	int year;
+	Unit selectedUnit;
 	boolean endGame;
 	boolean setUp;
+	boolean selected;
 	char winnerID;
-	
+	Tile[] tiles = new Tile[2];
 	
 
 	public void paint( Graphics window )
@@ -52,7 +54,6 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 		window.drawString("mouseLoc: " + mouseX+ " " + mouseY,850 , 100);
 		
 		window.drawString("turn number: " + turn, 200, 100);
-		
 		
 		//highlights the tile & changes the highlight color based on whose turn it currently is
 		for (Tile t: TileList) {
@@ -82,6 +83,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 						break;
 				case 7: color = new Color(0,255,255,100);
 						break;
+				default: color = new Color(255,255,255,175);
 				}
 				
 			
@@ -114,42 +116,88 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 		//since you only need to check when someone wins when the turn is advanced, game logic is here
 		
 		//if there have been too many years, the game ends
-		if(year > 1980) {
-			endGame = true;
-			return;
-		}
-		if(turn >= playerID.length - 1) {
-			turn = 0;
-			year++;
-		}
-		else {
-			turn++;
-		}
+		
 		//if all players have gone, the "year" advances
-		
-		//checks all players to see whether one of them has controlled the majority of supply hubs and therefore won
-		
-//		for(char c : playerMap.keySet()) {
-//			if(playerMap.get(c).hubCnt > 16) {
-//				endGame = true;
-//				winnerID = c;
-//				return;
-//			}
-//		}
-		
-		System.out.println("Year: " + year + " Turn: " + turn);
-		System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
-		
 		int loc1 = MouseInfo.getPointerInfo().getLocation().x;
 		int loc2 = MouseInfo.getPointerInfo().getLocation().y;
-		//print the name and location of the selected tile
-		for(Tile t : TileList) {
-			if(t.isInside(loc1, loc2)) {
-				System.out.println(t.getName() + ": " + loc1 + " " + loc2);
-				break;
+		
+		
+		// on left click, check for valid turns
+		if(e.getButton() == 1) {
+			
+			//if a troop is already selected
+			System.out.println("Mousebutton 1 pressed!");
+			System.out.println("Selected: " + selected);
+			
+			for(Tile t : TileList) {
+				//finds the selected tile
+				if(t.isInside(loc1, loc2)) {
+					//if the tile has a troop and that troop's ID matches the player's ID, set the starting tile to the tile and make the game know that a starting tile/unit has been selected
+					if(t.occupier != null && playerID[turn] == t.occupier.id) {
+						tiles[0] = t;
+						selected = true;
+					}
+					//if the player already has a unit selected, set the destination tile & move the troop there;
+					if(selected) {
+						tiles[1] = t;
+						try {
+							tiles[0].occupier.move(tiles[1]);
+						}
+						catch(Exception e1) {
+							System.out.println("You have not selected an ending/starting tile, please do so");
+						}
+						selected = false;
+					}
+
+					
+				}
 			}
 			
+			
+			
 		}
+		//on right click, advance the turn
+		else if(e.getButton() == 3) {
+			System.out.println("Mousebutton 3 pressed!");
+			if(year > 1980) {
+				endGame = true;
+				return;
+			}
+			if(turn >= playerID.length - 1) {
+					turn = 0;
+					year++;
+			}
+			else {
+					turn++;
+			}
+			
+			System.out.println("Year: " + year + " Turn: " + turn);
+			System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
+			
+	
+			//print the name and location of the clicked tile
+			for(Tile t : TileList) {
+				if(t.isInside(loc1, loc2)) {
+					System.out.println(t.getName() + ": " + loc1 + " " + loc2);
+					break;
+				}
+				
+			}
+		}
+		//on middle mouse button
+		else {
+			System.out.print("Mousebutton 2 pressed!");
+			
+		}
+		//checks whether someone has won no matter which mousebutton is pressed
+			for(char c : playerMap.keySet()) {
+				if(playerMap.get(c).hubCnt > 16) {
+					endGame = true;
+					winnerID = c;
+					return;
+				}
+			}
+		
 		
 		
 		
@@ -160,7 +208,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -176,7 +224,8 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		
+		System.out.println("Key Pressed");
+
 		
 	}
 
@@ -184,6 +233,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
+		System.out.println("Key Released");
 		
 	}
 
@@ -227,6 +277,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			playerMap = new HashMap<>();
 			
 			//initializes the year and the gamestate
+			selected = false;
 			setUp = true;
 			endGame = false;
 			year = 1901;
@@ -246,10 +297,12 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 				playerMap.put(playerID[i], new Player(f.next()));
 			}
 			f.close();
-			turn = 0;
+			turn = -1;
 			//print the player IDs
 			System.out.println(Arrays.toString(playerID));
 			System.out.println("Pressing any key on the keyboard will advance turns");
+			
+
 			
 	/*****************************************ADDING TILES************************************************************************************************/
 			ArrayList<Tile> United_Kingdom = new ArrayList<>();
@@ -732,6 +785,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			Edinburgh.addAdj(new Tile[] {York, Clyde, North_Sea, Norwegian_Sea, Liverpool});
 			
 		/********************************************************************************End of Tile Stuff*************************************************************************************************************************/
+			playerMap.get(playerID[0]).getArmy().add(new landUnit(playerID[0], Petrograd));
 			
 			new Thread(this).start();
 		}

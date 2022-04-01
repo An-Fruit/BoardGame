@@ -6,7 +6,7 @@ public class landUnit extends Unit{
 
 	
 	
-	public landUnit(char p, Tile pl, Point pt) {
+	public landUnit(char p, Tile pl) {
 		super(p, pl);
 	}
 	
@@ -36,7 +36,7 @@ public class landUnit extends Unit{
 	
 	public void paintComponent(Graphics window) {
 		Image landunitimg = Toolkit.getDefaultToolkit().getImage("ArmyUnit.png");
-		window.drawImage(landunitimg, loc.x, loc.y, loc.x + 5, loc.y + 5, this);
+		window.drawImage(landunitimg, loc.x, loc.y, 10, 10, this);
 	}
 	
 	
