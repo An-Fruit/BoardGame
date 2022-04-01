@@ -1,34 +1,45 @@
 import java.awt.Color;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.Polygon;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
+
+import javax.swing.JButton;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 
-public class BoardGame extends JPanel implements MouseListener, Runnable, KeyListener{
-	
+
+
+public class BoardGame extends JInternalFrame implements MouseListener, Runnable, KeyListener{
+	 
 
 	private ArrayList<Tile> TileList;
-	public ArrayList<Integer> xloc;
-	public ArrayList<Integer> yloc;
 	HashMap<Character, Player> playerMap;
 	char[] playerID;
 	int turn;
 	int year;
-	Unit selectedUnit;
 	boolean endGame;
 	boolean setUp;
-	boolean selected;
 	char winnerID;
-	Tile[] tiles = new Tile[2];
+	Tile currentTile;
+	JDesktopPane desktop;
+	JInternalFrame panel; 
+	boolean buttonPressed;
+	landUnit selectedUnit;
+	
 	
 
 	public void paint( Graphics window )
@@ -55,11 +66,14 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 		
 		window.drawString("turn number: " + turn, 200, 100);
 		
+		
 		//highlights the tile & changes the highlight color based on whose turn it currently is
 		for (Tile t: TileList) {
-			
+			if (t.occupier != null) {
+				t.occupier.paintComponent(window);
+			}
 			if(t.isInside(mouseX, mouseY)) {
-				
+				currentTile = t;
 				Color color = new Color(255,255,255,50);
 				switch(turn) {
 				//red
@@ -83,7 +97,6 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 						break;
 				case 7: color = new Color(0,255,255,100);
 						break;
-				default: color = new Color(255,255,255,175);
 				}
 				
 			
@@ -91,8 +104,6 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 				window.fillPolygon(t.collisionhull);
 				
 			}
-			
-			
 //			window.drawPolygon(t.collisionhull);
 		}
 		
@@ -108,6 +119,10 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			}
 		}
 		
+		if (panel != null) {
+			panel.moveToFront();
+		}
+		
 
 //		
 	}
@@ -116,87 +131,83 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 		//since you only need to check when someone wins when the turn is advanced, game logic is here
 		
 		//if there have been too many years, the game ends
-		
+		if(year > 1980) {
+			endGame = true;
+			return;
+		}
+		if(turn >= playerID.length - 1) {
+			turn = 0;
+			year++;
+		}
+		else {
+			turn++;
+		}
 		//if all players have gone, the "year" advances
+		
+		//checks all players to see whether one of them has controlled the majority of supply hubs and therefore won
+		
+//		for(char c : playerMap.keySet()) {
+//			if(playerMap.get(c).hubCnt > 16) {
+//				endGame = true;
+//				winnerID = c;
+//				return;
+//			}
+//		}
+		
+		System.out.println("Year: " + year + " Turn: " + turn);
+		System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
+		
 		int loc1 = MouseInfo.getPointerInfo().getLocation().x;
 		int loc2 = MouseInfo.getPointerInfo().getLocation().y;
+		//print the name and location of the selected tile
+		for(Tile t : TileList) {
+			if(t.isInside(loc1, loc2)) {
+				System.out.println(t.getName() + ": " + loc1 + " " + loc2);
+				break;
+			}
+			
+		}
+		
+		if (buttonPressed) {
+//			selectedUnit.move(currentTile);
+			selectedUnit.move(currentTile);
+			buttonPressed = false;
+		}
 		
 		
-		// on left click, check for valid turns
-		if(e.getButton() == 1) {
+		if (panel == null && currentTile.occupier != null) {
+			JInternalFrame pane = new JInternalFrame();
+			buttonPressed = false;
+			pane.setVisible(true);
+			pane.setResizable(true);
+			pane.setIconifiable(true);
+			pane.setSize(100,200);
+			selectedUnit = (landUnit)currentTile.occupier;
+				
+			final JButton move = new JButton("Move Unit");
+			move.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					buttonPressed = true;
+				}		
+			});
 			
-			//if a troop is already selected
-			System.out.println("Mousebutton 1 pressed!");
-			System.out.println("Selected: " + selected);
-			
-			for(Tile t : TileList) {
-				//finds the selected tile
-				if(t.isInside(loc1, loc2)) {
-					//if the tile has a troop and that troop's ID matches the player's ID, set the starting tile to the tile and make the game know that a starting tile/unit has been selected
-					if(t.occupier != null && playerID[turn] == t.occupier.id) {
-						tiles[0] = t;
-						selected = true;
-					}
-					//if the player already has a unit selected, set the destination tile & move the troop there;
-					if(selected) {
-						tiles[1] = t;
-						try {
-							tiles[0].occupier.move(tiles[1]);
-						}
-						catch(Exception e1) {
-							System.out.println("You have not selected an ending/starting tile, please do so");
-						}
-						selected = false;
-					}
+			final JButton close = new JButton("Close");
+			move.addActionListener(new ActionListener() {
 
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
 					
 				}
-			}
-			
-			
-			
-		}
-		//on right click, advance the turn
-		else if(e.getButton() == 3) {
-			System.out.println("Mousebutton 3 pressed!");
-			if(year > 1980) {
-				endGame = true;
-				return;
-			}
-			if(turn >= playerID.length - 1) {
-					turn = 0;
-					year++;
-			}
-			else {
-					turn++;
-			}
-			
-			System.out.println("Year: " + year + " Turn: " + turn);
-			System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
-			
-	
-			//print the name and location of the clicked tile
-			for(Tile t : TileList) {
-				if(t.isInside(loc1, loc2)) {
-					System.out.println(t.getName() + ": " + loc1 + " " + loc2);
-					break;
-				}
 				
-			}
-		}
-		//on middle mouse button
-		else {
-			System.out.print("Mousebutton 2 pressed!");
+			});
+			pane.add(move);
 			
+			panel = pane;
+			desktop.add(panel);
 		}
-		//checks whether someone has won no matter which mousebutton is pressed
-			for(char c : playerMap.keySet()) {
-				if(playerMap.get(c).hubCnt > 16) {
-					endGame = true;
-					winnerID = c;
-					return;
-				}
-			}
+		
 		
 		
 		
@@ -208,7 +219,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 	}
 
 	public void mouseReleased(MouseEvent e) {
-
+		// TODO Auto-generated method stub
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -224,8 +235,7 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.println("Key Pressed");
-
+		
 		
 	}
 
@@ -233,7 +243,6 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-		System.out.println("Key Released");
 		
 	}
 
@@ -266,21 +275,30 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 	}
 	
 	// constructor
-		public BoardGame() {
-			//interface stuff w/keyboard & mouse input
+		public BoardGame(JDesktopPane d) {
+			//interface stuff w/keyboard & mouse inpu
 			setBackground(Color.WHITE);
 			addMouseListener(this);
 			addKeyListener(this);
+			setVisible(true);
+			setSize(990,900);
+
 			
 			//list of tiles & players by playerID
 			TileList = new ArrayList<>();
 			playerMap = new HashMap<>();
 			
 			//initializes the year and the gamestate
-			selected = false;
 			setUp = true;
 			endGame = false;
 			year = 1901;
+			
+			//initializes JDesktop
+			desktop = d;
+			panel = null;
+			currentTile = null;
+			buttonPressed =false;
+			selectedUnit = null;
 			
 			//asks for the amount of players and the player ID array
 			Scanner f = new Scanner(System.in);
@@ -297,12 +315,10 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 				playerMap.put(playerID[i], new Player(f.next()));
 			}
 			f.close();
-			turn = -1;
+			turn = 0;
 			//print the player IDs
 			System.out.println(Arrays.toString(playerID));
 			System.out.println("Pressing any key on the keyboard will advance turns");
-			
-
 			
 	/*****************************************ADDING TILES************************************************************************************************/
 			ArrayList<Tile> United_Kingdom = new ArrayList<>();
@@ -786,6 +802,9 @@ public class BoardGame extends JPanel implements MouseListener, Runnable, KeyLis
 			
 		/********************************************************************************End of Tile Stuff*************************************************************************************************************************/
 			playerMap.get(playerID[0]).getArmy().add(new landUnit(playerID[0], Petrograd));
+			currentTile = Berlin;
+			
+			
 			
 			new Thread(this).start();
 		}
