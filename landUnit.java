@@ -21,6 +21,7 @@ public class landUnit extends Unit{
 					endTile.occupier = this;
 					this.place.occupier = null;
 					this.place = endTile;
+					
 				}
 				else {
 					endTile.occupier.fortify();
@@ -34,10 +35,10 @@ public class landUnit extends Unit{
 			System.out.println("You cannot move a land unit into or on a sea tile");
 		}
 	}
-//	
+	
 	public void paintComponent(Graphics window) {
 		Image landunitimg = Toolkit.getDefaultToolkit().getImage("ArmyUnit.png");
-		window.drawImage(landunitimg, place.loc.x-50, place.loc.y-50, 50, 50, this);
+		window.drawImage(landunitimg, place.loc.x, place.loc.y, 25, 25, this);
 	}
 	
 	
