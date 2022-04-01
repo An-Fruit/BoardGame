@@ -32,36 +32,12 @@ public class Unit extends JPanel{
 	public void fortify() {
 		strength++;
 	}
-	public void move(Tile endTile) {
-		if (endTile instanceof landTile) {
-			try {
-				if (endTile.occupier == null) {
-					endTile.occupier = this;
-					this.place = endTile;
-				}
-				else {
-					endTile.occupier.fortify();
-				}
-			}
-			catch (Exception e) {
-				
-			}
-		}
-		else {
-			System.out.println("You cannot move a land unit into or on a sea tile");
-		}
-	}
 	//rectangle of what you're making
 	public void paintComponent( Graphics window )
 	{
-		window.setColor(new Color(0,0,0,100));
-		window.fillRect(loc.x, loc.y, loc.x + 5, loc.y + 5);
-		
-			
-	}
-	
-	public String toString() {
-		return "ID: " + id + " Strength: " + strength + " Tile: " + place.getName();
+		window.setColor(new Color(255,0,0,100));
+		window.drawRect(loc.x, loc.y, loc.x + 5, loc.y + 5);
+
 	}
 
 }

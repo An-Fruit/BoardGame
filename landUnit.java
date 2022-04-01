@@ -6,7 +6,7 @@ public class landUnit extends Unit{
 
 	
 	
-	public landUnit(char p, Tile pl) {
+	public landUnit(char p, Tile pl, Point pt) {
 		super(p, pl);
 	}
 	
@@ -19,11 +19,11 @@ public class landUnit extends Unit{
 			try {
 				if (endTile.occupier == null) {
 					endTile.occupier = this;
+					this.place.occupier = null;
 					this.place = endTile;
+					endTile.occupier = this;	
 				}
-				else {
-					endTile.occupier.fortify();
-				}
+				
 			}
 			catch (Exception e) {
 				
@@ -36,7 +36,7 @@ public class landUnit extends Unit{
 	
 	public void paintComponent(Graphics window) {
 		Image landunitimg = Toolkit.getDefaultToolkit().getImage("ArmyUnit.png");
-		window.drawImage(landunitimg, loc.x, loc.y, 10, 10, this);
+		window.drawImage(landunitimg, place.loc.x-50, place.loc.y-50, 50, 50, this);
 	}
 	
 	

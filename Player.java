@@ -21,6 +21,10 @@ public class Player {
 		return army;
 	}
 	
+	public void addArmy(landUnit u) {
+		army.add(u);
+	}
+	
 	public String toString(){
 		String s = "";
 		s += "Player Name: " + name + " ";
