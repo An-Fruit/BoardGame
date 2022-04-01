@@ -35,4 +35,5 @@ public class Tile{
 	public String getName() {
 		return name;
 	}
+	
 }
