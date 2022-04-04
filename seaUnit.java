@@ -56,7 +56,7 @@ public class seaUnit extends Unit{
 	
 	public void paintComponent(Graphics window) {
 		Image seaunitimg = Toolkit.getDefaultToolkit().getImage("seaUnit.png");
-		window.drawImage(seaunitimg, place.loc.x, place.loc.y,10,10, this);
+		window.drawImage(seaunitimg, place.loc.x, place.loc.y,  25, 25, this);
 	}
 	
 	

@@ -3,7 +3,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 
 public class landUnit extends Unit{
-
 	
 	
 	public landUnit(char p, Tile pl) {
@@ -21,7 +20,6 @@ public class landUnit extends Unit{
 					endTile.occupier = this;
 					this.place.occupier = null;
 					this.place = endTile;
-					
 				}
 				else {
 					endTile.occupier.fortify();
@@ -36,9 +34,13 @@ public class landUnit extends Unit{
 		}
 	}
 	
+	public void support(Unit u) {
+		u.strength ++;
+	}
+	
 	public void paintComponent(Graphics window) {
 		Image landunitimg = Toolkit.getDefaultToolkit().getImage("ArmyUnit.png");
-		window.drawImage(landunitimg, place.loc.x, place.loc.y, 25, 25, this);
+		window.drawImage(landunitimg, place.loc.x-50, place.loc.y-50, 50, 50, this);
 	}
 	
 	

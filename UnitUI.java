@@ -7,63 +7,13 @@ import java.awt.event.MouseListener;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 
-public class UnitUI extends JInternalFrame implements MouseListener{
+public class UnitUI extends JInternalFrame{
 	
-	
-	
-	landUnit selectedUnit;
-	static Tile selectedTile;
-	boolean buttonPressed;
-	public UnitUI(landUnit u, Tile t) {
-		selectedTile = t;
-		selectedUnit = u;
-		buttonPressed = false;
+	public UnitUI() {
 		setVisible(true);
 		setResizable(true);
 		setIconifiable(true);
-		setSize(100,100);
-		
-		final JButton move = new JButton("Move Unit");
-		move.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonPressed = true;
-			}
-			
-		});
-		
-		add(move);
+		setSize(300,300);
+		setClosable(true);
 	}
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		if (buttonPressed) {
-			selectedUnit.move(selectedTile);
-			buttonPressed = false;
-		}
-	}
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-
-	
 }
