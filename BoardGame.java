@@ -157,27 +157,24 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		System.out.println("Year: " + year + " Turn: " + turn);
 		System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
 		
-		int loc1 = MouseInfo.getPointerInfo().getLocation().x;
-		int loc2 = MouseInfo.getPointerInfo().getLocation().y;
-		
 		// generates the UI for ordering moves when a Unit is cliked on
 		if (panel == null && currentTile.occupier != null) {
 			selectedUnit = currentTile.occupier;
 			if (selectedUnit instanceof landUnit) {
 				selectedUnit = currentTile.occupier;
-				landUnitUI pane = new landUnitUI((landUnit)selectedUnit, false, false);
+				landUnitUI pane = new landUnitUI((landUnit)selectedUnit);
 				panel = pane;
 				desktop.add(panel);
 			}
 			else {
-				selectedUnit = (seaUnit)currentTile.occupier;
-				seaUnitUI pane = new seaUnitUI((seaUnit)selectedUnit, false, false);
+				selectedUnit = currentTile.occupier;
+				seaUnitUI pane = new seaUnitUI((seaUnit)selectedUnit);
 				panel = pane;
 				desktop.add(panel);
 			}
 		}
 	
-		// if a button has been clicked to order a move, it will be executed
+		// if a button has been clicked to order a move, the move will be executed
 		if (panel instanceof landUnitUI) {
 			landUnitUI use = (landUnitUI) panel;
 			landUnit chosenUnit = (landUnit)selectedUnit;
@@ -191,6 +188,21 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 					panel = null;
 				}
 			}
+		}
+		else {
+			seaUnitUI use = (seaUnitUI) panel;
+			seaUnit chosenUnit = (seaUnit) selectedUnit;
+			if (use.moveButtonPressed) {
+				chosenUnit.move(currentTile);
+				panel = null;
+			}
+			if (use.moveButtonPressed) {
+				if (currentTile.occupier != null && currentTile.occupier instanceof landUnit) {
+					chosenUnit.support((seaUnit)currentTile.occupier);
+					panel = null;
+				}
+			}
+				
 		}
 		
 	}
@@ -781,8 +793,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			
 		/********************************************************************************End of Tile Stuff*************************************************************************************************************************/
 			playerMap.get(playerID[0]).getArmy().add(new landUnit(playerID[0], Petrograd));
-			currentTile = Berlin;
-			
+			playerMap.get(playerID[0]).getFleet().add(new seaUnit(playerID[0], Skagerrak));			
 			
 			
 			new Thread(this).start();
