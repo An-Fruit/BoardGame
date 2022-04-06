@@ -38,7 +38,8 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 	Tile currentTile;
 	JDesktopPane desktop;
 	UnitUI panel; 
-	Unit selectedUnit;
+	buildUI buildPanel;
+	Tile selectedTile;
 	
 	
 
@@ -157,52 +158,73 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		System.out.println("Year: " + year + " Turn: " + turn);
 		System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
 		
-		// generates the UI for ordering moves when a Unit is cliked on
-		if (panel == null && currentTile.occupier != null) {
-			selectedUnit = currentTile.occupier;
-			if (selectedUnit instanceof landUnit) {
-				selectedUnit = currentTile.occupier;
-				landUnitUI pane = new landUnitUI((landUnit)selectedUnit);
+		// generates the UI for ordering moves when a Unit is cliked on or a buildUI when a supply hub is clicked
+		
+		if (panel == null && currentTile.isHub && currentTile.occupier == null) {
+			selectedTile = currentTile;
+			buildUI pane = new buildUI();
+			panel = pane;
+			desktop.add(panel);
+		}
+		
+		else if (panel == null && currentTile.occupier != null) {
+			selectedTile = currentTile;
+			if (selectedTile.occupier instanceof landUnit) {
+				selectedTile.occupier = currentTile.occupier;
+				landUnitUI pane = new landUnitUI((landUnit)selectedTile.occupier);
 				panel = pane;
 				desktop.add(panel);
 			}
 			else {
-				selectedUnit = currentTile.occupier;
-				seaUnitUI pane = new seaUnitUI((seaUnit)selectedUnit);
+				selectedTile.occupier = currentTile.occupier;
+				seaUnitUI pane = new seaUnitUI((seaUnit)selectedTile.occupier);
 				panel = pane;
 				desktop.add(panel);
 			}
 		}
 	
 		// if a button has been clicked to order a move, the move will be executed
-		if (panel instanceof landUnitUI) {
+		if (panel != null && panel instanceof buildUI ) {
+			buildUI use = (buildUI)panel;
+			if (use.buildFleetButton) {
+				playerMap.get(playerID[0]).getFleet().add(new seaUnit(playerID[0], selectedTile));
+				panel = null;
+			}
+			else if (use.buildLandUnit) {
+				playerMap.get(playerID[0]).getArmy().add(new landUnit(playerID[0], selectedTile));
+				panel = null;
+			}
+		}
+		if (panel != null  && selectedTile.occupier!= null && panel instanceof landUnitUI ) {
 			landUnitUI use = (landUnitUI) panel;
-			landUnit chosenUnit = (landUnit)selectedUnit;
+			landUnit chosenUnit = (landUnit)selectedTile.occupier;
 			if (use.moveButtonPressed) {
 				chosenUnit.move(currentTile);
 				panel = null;
 			}
-			if (use.moveButtonPressed) {
-				if (currentTile.occupier != null && currentTile.occupier instanceof landUnit) {
+			else if (use.moveButtonPressed) {
+				if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
 					chosenUnit.support(currentTile.occupier);
 					panel = null;
 				}
 			}
 		}
-		else {
+		else if (panel != null  && selectedTile.occupier!= null ) {
 			seaUnitUI use = (seaUnitUI) panel;
-			seaUnit chosenUnit = (seaUnit) selectedUnit;
+			seaUnit chosenUnit = (seaUnit) selectedTile.occupier;
 			if (use.moveButtonPressed) {
 				chosenUnit.move(currentTile);
 				panel = null;
 			}
-			if (use.moveButtonPressed) {
+			else if (use.moveButtonPressed) {
 				if (currentTile.occupier != null && currentTile.occupier instanceof landUnit) {
 					chosenUnit.support((seaUnit)currentTile.occupier);
 					panel = null;
 				}
-			}
-				
+			}	
+		}
+		if (panel != null && panel.isClosed()) {
+			panel = null;
 		}
 		
 	}
@@ -287,7 +309,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			desktop = d;
 			panel = null;
 			currentTile = null;
-			selectedUnit = null;
+			selectedTile = null;
 			
 			//asks for the amount of players and the player ID array
 			Scanner f = new Scanner(System.in);
