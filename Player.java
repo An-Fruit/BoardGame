@@ -5,6 +5,7 @@ public class Player {
 	String name;
 	ArrayList<landUnit> army;
 	ArrayList<seaUnit> fleet;
+	ArrayList<Tile> tilesOwned;
 	int hubCnt;
 	
 	
@@ -12,7 +13,11 @@ public class Player {
 		name = n;
 		army  = new ArrayList<>();
 		fleet  = new ArrayList<>();
+		tilesOwned = new ArrayList<>();
 		hubCnt = 0;
+	}
+	public void setNation(ArrayList<Tile> list) {
+		tilesOwned = list;
 	}
 	public ArrayList<seaUnit> getFleet(){
 		return fleet;
@@ -24,7 +29,9 @@ public class Player {
 	public void addArmy(landUnit u) {
 		army.add(u);
 	}
-	
+	public String getName() {
+		return name;
+	}
 	public String toString(){
 		String s = "";
 		s += "Player Name: " + name + " ";
