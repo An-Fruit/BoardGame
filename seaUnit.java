@@ -18,32 +18,45 @@ public class seaUnit extends Unit{
 	}
 	
 	
-	
+	//move the sea unit from its current position to Tile t
 	public void move(Tile t) {
 		
+
 		
-		try {
-			
-			//if the tile is a coastal tile and there are no occupiers, the tile's occupier automatically becomes this unit
-			if (t instanceof landTile && ((landTile) t).isCoast && t.occupier == null) {
-				t.occupier = this;
-				this.place = t;
+			//if the tile is a coastal tile and the occupier's strength is less than that of this unit, move our unit to the endtile and subsequently deduct strength
+			//use try catch to avoid having to check for whether occupier is null
+			try {
+				Unit enemyUnit = t.occupier;
+				if ((t instanceof landTile && ((landTile)t).isCoast) || (t instanceof seaTile) && enemyUnit.strength < this.strength) {
+					
+					//subtract the enemy unit strength from ours
+					this.strength -= enemyUnit.strength;
+					//displace the original end tile occupying unit
+					enemyUnit.place = null;
+					//clear out the current tile so we don't duplicate units
+					this.place.occupier = null;
+					//set the occupying unit of the endtile to this unit
+					t.occupier = this;
+					//reciprocate on both ends
+					this.place = t;
+					
+					
+				}
 			}
-			
-			//same with above, but with sea tiles
-			else if (t instanceof seaTile && t.occupier == null) {
-				t.occupier = this;
+			// if the ending tile is empty, just move the unit
+			catch(Exception e) {
+				//prevent duplicates
 				this.place.occupier = null;
+				//set the ending tile's occupying unit to this
+				t.occupier = this;
+				//reciprocate on both ends
 				this.place = t;
-			}
-		}
-		catch (Exception e) {
-			//the tile you are trying to move into is already occupied, and they have greater strength
-			if (t.occupier.strength >= this.strength) {
-				System.out.print("you cannot move");
+				//System.out.println("Not a valid move or some other error");
 			}
 			
-		}
+			
+			
+		
 	}
 	
 	public void convoy() {
@@ -57,6 +70,7 @@ public class seaUnit extends Unit{
 	public void paintComponent(Graphics window) {
 		Image seaunitimg = Toolkit.getDefaultToolkit().getImage("seaUnit.png");
 		window.drawImage(seaunitimg, place.loc.x, place.loc.y,  25, 25, this);
+		
 	}
 	
 	

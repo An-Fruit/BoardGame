@@ -25,12 +25,28 @@ public class Player {
 	public ArrayList<landUnit> getArmy(){
 		return army;
 	}
-	
+	public ArrayList<Tile> getTiles(){
+		return tilesOwned;
+	}
 	public void addArmy(landUnit u) {
 		army.add(u);
 	}
 	public String getName() {
 		return name;
+	}
+	
+	//dispose of units who do not belong to a tile
+	public void disposeUnits() {
+		for(landUnit Lu : army) {
+			if(Lu.place == null) {
+				army.remove(Lu);
+			}
+		}
+		for(seaUnit Su : fleet) {
+			if(Su.place == null) {
+				fleet.remove(Su);
+			}
+		}
 	}
 	public String toString(){
 		String s = "";

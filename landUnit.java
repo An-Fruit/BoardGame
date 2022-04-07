@@ -14,19 +14,33 @@ public class landUnit extends Unit{
 	}
 	
 	public void move(Tile endTile) {
+		//if the ending tile is a landtile, you can move the troops
 		if (endTile instanceof landTile) {
+			//if the ending tile is occupied 
 			try {
-				if (endTile.occupier == null) {
-					endTile.occupier = this;
-					this.place.occupier = null;
-					this.place = endTile;
+				Unit enemyUnit = endTile.occupier;
+				if (enemyUnit.strength >= this.strength) {
+					System.out.println("You cannot move a unit onto a tile where the occupying strength is greater than the unit strength");
 				}
 				else {
-					endTile.occupier.fortify();
+					//subtract the enemy unit strength from ours
+					this.strength -= enemyUnit.strength;
+					//displace the original end tile occupying unit
+					enemyUnit.place = null;
+					//clear out the current tile so we don't duplicate units
+					this.place.occupier = null;
+					//set the occupying unit of the endtile to this unit
+					endTile.occupier = this;
+					//reciprocate on both ends
+					this.place = endTile;
 				}
-			}
-			catch (Exception e) {
 				
+			}
+			//if the ending tile is not occupied
+			catch (Exception e) {
+				endTile.occupier = this;
+				this.place.occupier = null;
+				this.place = endTile;
 			}
 		}
 		else {

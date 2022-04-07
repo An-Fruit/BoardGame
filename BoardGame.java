@@ -108,6 +108,36 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 //			window.drawPolygon(t.collisionhull);
 		}
 		
+		//territory colors
+		for(char c : playerID) {
+			Color color = new Color(255, 255, 255, 0);
+			if(c == 'A') {
+				color = new Color(255, 0, 0, 100);
+			}
+			else if(c == 'B') {
+				color = new Color(0,255,0,100);
+			}
+			else if(c == 'C') {
+				color = new Color(0,0,255,100);
+			}
+			else if(c == 'D') {
+				color = new Color(255,200,0,100);
+			}
+			else if(c == 'E') {
+				color = new Color(175,0,255,100);
+			}
+			else if(c == 'F') {
+				color = new Color(0,255,60,100);
+			}
+			else if(c == 'G') {
+				color = new Color(250,250,60,100);
+			}
+			window.setColor(color);
+			for(Tile t : playerMap.get(c).getTiles()) {
+				window.fillPolygon(t.collisionhull);
+			}
+		}
+		
 		
 		//draw the all units on the board
 		for(char c : playerID) {
@@ -124,7 +154,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			panel.moveToFront();
 		}
 		
-
+		
 //		
 	}
 	//on click, figure out the x/y values and iterate the turns
@@ -132,16 +162,110 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		//since you only need to check when someone wins when the turn is advanced, game logic is here
 		
 		//if there have been too many years, the game ends
-		if(year > 1980) {
-			endGame = true;
-			return;
+		if(e.getButton() == 1) {
+			// generates the UI for ordering moves when a Unit is cliked on or a buildUI when a supply hub is clicked
+			
+			//if there's no panel currently pulled up and there is no unit on the tile and the tile has a supply hub, bring up the build panel
+			if (panel == null && currentTile.isHub && currentTile.occupier == null) {
+				selectedTile = currentTile;
+				buildUI pane = new buildUI();
+				panel = pane;
+				desktop.add(panel);
+			}
+			
+			//if there is a unit on the tile, bring up the land unit UI or the sea unit UI depending on what type of unit it is
+			else if (panel == null && currentTile.occupier != null) {
+				selectedTile = currentTile;
+				if (selectedTile.occupier instanceof landUnit) {
+					selectedTile.occupier = currentTile.occupier;
+					landUnitUI pane = new landUnitUI((landUnit)selectedTile.occupier);
+					panel = pane;
+					desktop.add(panel);
+				}
+				else {
+					selectedTile.occupier = currentTile.occupier;
+					seaUnitUI pane = new seaUnitUI((seaUnit)selectedTile.occupier);
+					panel = pane;
+					desktop.add(panel);
+				}
+			}
+		
+			// if a button has been clicked to order a move, the move will be executed
+			//build units
+			if (panel != null && panel instanceof buildUI ) {
+				buildUI use = (buildUI)panel;
+				if (use.buildFleetButton) {
+					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
+					panel = null;
+				}
+				else if (use.buildLandUnit) {
+					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
+					panel = null;
+				}
+			}
+			
+			//move land units
+			if (panel != null  && selectedTile.occupier!= null && panel instanceof landUnitUI ) {
+				landUnitUI use = (landUnitUI) panel;
+				landUnit chosenUnit = (landUnit)selectedTile.occupier;
+				if (use.moveButtonPressed) {
+					chosenUnit.move(currentTile);
+					for(char c : playerID) {
+						playerMap.get(c).disposeUnits();
+					}
+					panel = null;
+				}
+				else if (use.moveButtonPressed) {
+					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
+						chosenUnit.support(currentTile.occupier);
+						panel = null;
+					}
+				}
+			}
+			//move sea units
+			else if (panel != null  && selectedTile.occupier!= null ) {
+				seaUnitUI use = (seaUnitUI) panel;
+				seaUnit chosenUnit = (seaUnit) selectedTile.occupier;
+				if (use.moveButtonPressed) {
+					chosenUnit.move(currentTile);
+					for(char c : playerID) {
+						playerMap.get(c).disposeUnits();
+					}
+					panel = null;
+				}
+				else if (use.moveButtonPressed) {
+					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit) {
+						chosenUnit.support((seaUnit)currentTile.occupier);
+						panel = null;
+					}
+				}	
+			}
+			//reset the panel to null when closing
+			if (panel != null && panel.isClosed()) {
+				panel = null;
+			}
 		}
-		if(turn >= playerID.length - 1) {
-			turn = 0;
-			year++;
+		
+		//on middle mouse
+		else if(e.getButton() == 2) {
+			
 		}
+		
+		//on right click
 		else {
-			turn++;
+			if(year > 1980) {
+				endGame = true;
+				return;
+			}
+			if(turn >= playerID.length - 1) {
+				turn = 0;
+				year++;
+			}
+			else {
+				turn++;
+			}
+			System.out.println("Year: " + year + " Turn: " + turn);
+			System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
 		}
 		//if all players have gone, the "year" advances
 		
@@ -155,77 +279,9 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 //			}
 //		}
 		
-		System.out.println("Year: " + year + " Turn: " + turn);
-		System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
+
 		
-		// generates the UI for ordering moves when a Unit is cliked on or a buildUI when a supply hub is clicked
 		
-		if (panel == null && currentTile.isHub && currentTile.occupier == null) {
-			selectedTile = currentTile;
-			buildUI pane = new buildUI();
-			panel = pane;
-			desktop.add(panel);
-		}
-		
-		else if (panel == null && currentTile.occupier != null) {
-			selectedTile = currentTile;
-			if (selectedTile.occupier instanceof landUnit) {
-				selectedTile.occupier = currentTile.occupier;
-				landUnitUI pane = new landUnitUI((landUnit)selectedTile.occupier);
-				panel = pane;
-				desktop.add(panel);
-			}
-			else {
-				selectedTile.occupier = currentTile.occupier;
-				seaUnitUI pane = new seaUnitUI((seaUnit)selectedTile.occupier);
-				panel = pane;
-				desktop.add(panel);
-			}
-		}
-	
-		// if a button has been clicked to order a move, the move will be executed
-		if (panel != null && panel instanceof buildUI ) {
-			buildUI use = (buildUI)panel;
-			if (use.buildFleetButton) {
-				playerMap.get(playerID[0]).getFleet().add(new seaUnit(playerID[0], selectedTile));
-				panel = null;
-			}
-			else if (use.buildLandUnit) {
-				playerMap.get(playerID[0]).getArmy().add(new landUnit(playerID[0], selectedTile));
-				panel = null;
-			}
-		}
-		if (panel != null  && selectedTile.occupier!= null && panel instanceof landUnitUI ) {
-			landUnitUI use = (landUnitUI) panel;
-			landUnit chosenUnit = (landUnit)selectedTile.occupier;
-			if (use.moveButtonPressed) {
-				chosenUnit.move(currentTile);
-				panel = null;
-			}
-			else if (use.moveButtonPressed) {
-				if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
-					chosenUnit.support(currentTile.occupier);
-					panel = null;
-				}
-			}
-		}
-		else if (panel != null  && selectedTile.occupier!= null ) {
-			seaUnitUI use = (seaUnitUI) panel;
-			seaUnit chosenUnit = (seaUnit) selectedTile.occupier;
-			if (use.moveButtonPressed) {
-				chosenUnit.move(currentTile);
-				panel = null;
-			}
-			else if (use.moveButtonPressed) {
-				if (currentTile.occupier != null && currentTile.occupier instanceof landUnit) {
-					chosenUnit.support((seaUnit)currentTile.occupier);
-					panel = null;
-				}
-			}	
-		}
-		if (panel != null && panel.isClosed()) {
-			panel = null;
-		}
 		
 	}
 
@@ -839,6 +895,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 //					playerMap.get(playerID[i]).setNation(Ottomans);
 //				}
 //			}
+
 			String s;
 			for(int i = 0; i < playerID.length; i++) {
 				System.out.println("What is Player " + playerMap.get(playerID[i]).getName() + "'s starting nation?");
@@ -867,8 +924,8 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				}
 			}
 			f.close();
-			playerMap.get(playerID[0]).getArmy().add(new landUnit(playerID[0], Petrograd));
-			playerMap.get(playerID[0]).getFleet().add(new seaUnit(playerID[0], Skagerrak));			
+//			playerMap.get(playerID[0]).getArmy().add(new landUnit(playerID[0], Petrograd));
+//			playerMap.get(playerID[0]).getFleet().add(new seaUnit(playerID[0], Skagerrak));			
 			
 			
 			new Thread(this).start();
