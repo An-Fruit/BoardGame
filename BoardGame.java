@@ -110,7 +110,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		//territory colors
 		for(char c : playerID) {
-			Color color = new Color(255, 255, 255, 0);
+			Color color = new Color(255, 255, 255, 100);
 			if(c == 'A') {
 				color = new Color(255, 0, 0, 100);
 			}
@@ -344,7 +344,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 	
 	// constructor
 		public BoardGame(JDesktopPane d) {
-			//interface stuff w/keyboard & mouse inpu
+			//interface stuff w/keyboard & mouse input
 			setBackground(Color.WHITE);
 			addMouseListener(this);
 			addKeyListener(this);
@@ -406,7 +406,8 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {320, 327, 356, 372, 434, 453, 441, 415, 408, 411, 397, 385, 362, 345, 360}, 
 			15, true, false,617,412);
 			TileList.add(Baltic_States);
-			
+			Russia.add(Baltic_States);
+
 			landTile Moscow = new landTile("Moscow", new int[] {990, 668, 659, 622, 630, 763, 895, 991, 989},
 			new int[] {188, 354, 431, 452, 475, 457, 446, 514, 188}, 
 			9, false, true,785,381);
@@ -435,12 +436,14 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {539, 520, 526, 514, 523, 522, 539, 587, 591, 549, 544, 547, 539}, 
 			13, false, false,613,551);
 			TileList.add(Galicia);
-			
+			Austria.add(Galicia);
+
 			landTile Prussia = new landTile("Prussia", new int[] {567, 576, 578, 587, 595, 595, 584, 556, 530, 523, 484, 475, 478, 501, 529, 528, 549, 561, 568, 566, 566},
 			new int[] {386, 395, 412, 410, 418, 441, 450, 449, 459, 474, 470, 452, 437, 427, 420, 431, 417, 412, 399, 390, 387}, 
 			21, true, false,557,438);
 			TileList.add(Prussia);
-			
+			Germany.add(Prussia);
+
 			landTile Romania = new landTile("Romania", new int[] {663, 667, 687, 696, 712, 702, 669, 651, 602, 598, 601, 658, 666, 645, 644, 662, 662},
 			new int[] {574, 574, 595, 630, 628, 665, 661, 673, 668, 654, 642, 631, 623, 602, 598, 591, 574}, 
 			17, true, true,649,666);
@@ -455,7 +458,8 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {160, 180, 237, 247, 255, 282, 297, 276, 249, 97, 88, 72, 91, 90, 89, 109, 162, }, 
 			17, true, false,625,219);
 			TileList.add(Finland);
-			
+			Russia.add(Finland);
+
 			landTile Norway = new landTile("Norway", new int[] {381, 376, 399, 437, 448, 478, 527, 559, 556, 565, 577, 599, 600, 640, 651, 642, 642, 625, 624, 591, 525, 432, 416, 382},
 			new int[] {242, 313, 328, 305, 317, 207, 107, 95, 91, 80, 90, 90, 69, 88, 71, 67, 52, 48, 58, 48, 81, 222, 221, 244}, 
 			24, true, true,435,305);
@@ -470,27 +474,32 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {480, 517, 521, 523, 504, 506, 489, 489, 474, 480}, 
 			10, false, false,497,501);
 			TileList.add(Silesia);
-			
+			Germany.add(Silesia);
+
 			landTile Berlin = new landTile("Berlin", new int[] {435, 457, 465, 465, 475, 471, 482, 462, 430, 430, 436},
 			new int[] {436, 423, 423, 434, 434, 453, 471, 485, 488, 453, 435}, 
 			11, true, true,452,482);
 			TileList.add(Berlin);
-			
+			Germany.add(Berlin);
+
 			landTile Czechia = new landTile("Czechia", new int[] {471, 481, 502, 511, 525, 515, 480, 474, 458, 437, 432, 462, 470},
 			new int[] {509, 509, 527, 528, 543, 547, 550, 562, 563, 543, 519, 514, 508}, 
 			13, false, false,471,548);
 			TileList.add(Czechia);
-			
+			Austria.add(Czechia);
+
 			landTile Kiel = new landTile("Kiel", new int[] {397, 411, 418, 413, 419, 431, 425, 426, 397, 350, 366, 373, 379, 396, 396},
 			new int[] {404, 404, 421, 424, 432, 436, 452, 490, 506, 477, 466, 434, 439, 433, 405}, 
 			15, true, true,395,498);
 			TileList.add(Kiel);
-			
+			Germany.add(Kiel);
+
 			landTile Bavaria = new landTile("Bavaria", new int[] {468, 458, 429, 431, 451, 436, 388, 380, 356, 339, 342, 361, 377, 391, 427, 456, 468, },
 			new int[] {507, 514, 513, 537, 557, 577, 578, 573, 573, 566, 547, 538, 509, 502, 492, 489, 509, }, 
 			17, false, true,419,575);
 			TileList.add(Bavaria);
-			
+			Germany.add(Bavaria);
+
 			landTile Hungary = new landTile("Hungary", new int[] {502, 527, 551, 569, 612, 640, 640, 662, 657, 599, 595, 527, 525, 511, 502},
 			new int[] {606, 588, 557, 552, 565, 594, 603, 624, 628, 639, 649, 643, 624, 624, 606}, 
 			15, false, true,526,611);
@@ -500,17 +509,20 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {554, 550, 552, 551, 556, 583, 592, 605, 603, 581, 567, 554}, 
 			12, false, true,488,591);
 			TileList.add(Vienna);
-			
+			Austria.add(Vienna);
+
 			landTile Tyrol = new landTile("Tyrol", new int[] {382, 440, 453, 468, 480, 476, 464, 432, 420, 406, 395, 398, 381},
 			new int[] {581, 585, 567, 568, 581, 601, 609, 609, 612, 629, 614, 605, 592}, 
 			13, false, false,453,602);
 			TileList.add(Tyrol);
-			
+			Austria.add(Tyrol);
+
 			landTile Trieste = new landTile("Trieste", new int[] {457, 463, 477, 494, 499, 506, 519, 523, 539, 540, 532, 541, 538, 534, 496, 469, 467, 458, 452, 450, 457},
 			new int[] {613, 614, 605, 612, 610, 627, 629, 648, 648, 671, 678, 702, 703, 714, 689, 657, 638, 635, 642, 635, 614}, 
 			21, false, true,459,635);
 			TileList.add(Trieste);
-			
+			Austria.add(Trieste);
+
 			landTile Serbia = new landTile("Serbia", new int[] {544, 593, 600, 600, 573, 573, 567, 567, 545, 537, 543},
 			new int[] {650, 655, 689, 700, 744, 741, 736, 710, 699, 681, 673}, 
 			11, true, true,553,683);
@@ -535,72 +547,86 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {718, 737, 747, 752, 774, 773, 779, 775, 769, 730, 729, 730, 724, 724, 712, 717}, 
 			16, true, true,698,748);
 			TileList.add(Istanbul);
-			
+			Ottomans.add(Istanbul);
+
 			landTile Eastern_Anatolia = new landTile("Eastern_Anatolia", new int[] {757, 780, 816, 907, 904, 866, 829, 802, 768, 759, 764, 765, 761},
 			new int[] {723, 692, 685, 690, 726, 726, 759, 759, 777, 776, 767, 731, 725}, 
 			13, true, true,781,760);
 			TileList.add(Eastern_Anatolia);
-			
+			Ottomans.add(Eastern_Anatolia);
+
 			landTile Southern_Anatolia = new landTile("Southern_Anatolia", new int[] {907, 921, 886, 873, 845, 833, 824, 798, 778, 765, 751, 734, 726, 712, 706, 695, 684, 683, 693, 706, 751, 766, 800, 829, 867, 902, },
 			new int[]{730, 753, 772, 792, 814, 813, 831, 839, 823, 825, 846, 844, 839, 840, 827, 828, 807, 775, 775, 782, 776, 780, 761, 764, 729, 726} , 
 			26, true, true,690,813);
 			TileList.add(Southern_Anatolia);
-			
+			Ottomans.add(Southern_Anatolia);
+
 			landTile Armenia = new landTile("Armenia", new int[] {908, 935, 990, 990, 919, 908, 908},
 			new int[] {693, 676, 695, 770, 747, 730, 693}, 
 			7, false, false,937,741);
 			TileList.add(Armenia);
-			
+			Ottomans.add(Armenia);
+
 			landTile Syria = new landTile("Syria", new int[] {943, 989, 999, 871, 869, 861, 878, 887, 943},
 			new int[] {758, 774, 896, 897, 843, 839, 791, 774, 758}, 
 			9, false, false,916,845);
 			TileList.add(Syria);
-			
+			Ottomans.add(Syria);
+
 			landTile Rhineland = new landTile("Rhineland", new int[] {345, 336, 338, 336, 341, 381, 394, 350},
 			new int[] {477, 499, 518, 540, 548, 512, 505, 478}, 
 			8, false, false,348,533);
 			TileList.add(Rhineland);
-			
+			Germany.add(Rhineland);
+
 			landTile Venice = new landTile("Venice", new int[] {452, 447, 425, 418, 441, 445, 428, 382, 397, 405, 421, 432, 451},
 			new int[] {614, 632, 632, 657, 672, 706, 689, 651, 625, 634, 617, 613, 613}, 
 			13, true, true,417,644);
 			TileList.add(Venice);
-			
+			Italy.add(Venice);
+
 			landTile Aputia = new landTile("Aputia", new int[] {450, 452, 478, 524, 504, 497, 477, 458, 450},
 			new int[] {709, 708, 720, 761, 759, 766, 759, 721, 710}, 
 			9, true, false,473,748);
 			TileList.add(Aputia);
-			
+			Italy.add(Aputia);
+
 			landTile Tuscany = new landTile("Tuscany", new int[] {376, 381, 407, 423, 402, 385, 377},
 			new int[] {659, 655, 665, 686, 695, 679, 658}, 
 			7, true, false,400,688);
 			TileList.add(Tuscany);
-			
+			Italy.add(Tuscany);
+
 			landTile Rome = new landTile("Rome", new int[] {398, 425, 446, 454, 440, 412, 398, },
 			new int[] {702, 691, 710, 724, 734, 727, 704, }, 
 			7, true, true,409,722);
 			TileList.add(Rome);
-			
+			Italy.add(Rome);
+
 			landTile Napoli = new landTile("Napoli", new int[] {438, 453, 472, 497, 496, 476, 439},
 			new int[] {735, 724, 758, 769, 777, 777, 737}, 
 			6, true, true,461,760);
 			TileList.add(Napoli);
-			
+			Italy.add(Napoli);
+
 			landTile Sicily = new landTile("Sicily", new int[] {476, 502, 507, 483, 470, 458, 456, 444, 399, 408, 434, 458, 467, 474, },
 			new int[] {780, 780, 791, 819, 819, 819, 843, 845, 814, 805, 810, 808, 808, 780, }, 
 			14, true, false,478,806);
 			TileList.add(Sicily);
-			
+			Italy.add(Sicily);
+
 			landTile Piedmont = new landTile("Piedmont", new int[] {336, 388, 395, 379, 380, 355, 340, 335},
 			new int[] {611, 614, 622, 637, 656, 652, 659, 610}, 
 			8, true, false,358,642);
 			TileList.add(Piedmont);
-			
+			Italy.add(Piedmont);
+
 			landTile Burgundy = new landTile("Burgundy", new int[] {310, 334, 343, 340, 314, 285, 273, 253, 302, 310, 314},
 			new int[] {511, 541, 551, 571, 601, 601, 621, 604, 539, 514, 515}, 
 			8, true, false,302,583);
 			TileList.add(Burgundy);
-			
+			France.add(Burgundy);
+
 			landTile Netherlands = new landTile("Netherlands", new int[] {311, 331, 334, 344, 362, 365, 342, 328, 310},
 			new int[] {472, 483, 494, 473, 464, 437, 433, 443, 469}, 
 			9, true, false,329,465);
@@ -615,27 +641,32 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {523, 525, 538, 593, 584, 522}, 
 			6, false, true,274,545);
 			TileList.add(Paris);
-			
+			France.add(Paris);
+
 			landTile Picardy = new landTile("Picardy", new int[] {270, 295, 308, 305, 240, 248, 269},
 			new int[] {495, 497, 512, 521, 519, 502, 493}, 
 			7, true, false,267,519);
 			TileList.add(Picardy);
-			
+			France.add(Picardy);
+
 			landTile Brest = new landTile("Brest", new int[] {163, 184, 205, 235, 234, 196, 195, 161},
 			new int[] {507, 506, 517, 516, 575, 565, 544, 515}, 
 			8, true, true,208,558);
 			TileList.add(Brest);
-			
+			France.add(Brest);
+
 			landTile Gascony = new landTile("Gascony", new int[] {204, 230, 230, 252, 250, 267, 236, 228, 179, 179, 204},
 			new int[] {577, 580, 585, 596, 602, 620, 638, 658, 647, 636, 576}, 
 			11, true, false,214,616);
 			TileList.add(Gascony);
-			
+			France.add(Gascony);
+
 			landTile Marseilles = new landTile("Marseilles", new int[] {288, 309, 310, 329, 335, 333, 300, 275, 254, 231, 237, 267, 280},
 			new int[] {607, 604, 607, 611, 658, 663, 669, 654, 676, 660, 643, 624, 626}, 
 			13, true, true,296,638);
 			TileList.add(Marseilles);
-			
+			France.add(Marseilles);
+
 			landTile Spain = new landTile("Spain",new int[] {51, 52, 76, 173, 175, 226, 253, 235, 207, 175, 183, 159, 138, 124, 51, 41, 89, 52},
 			new int[] {629, 604, 598, 634, 647, 662, 686, 697, 697, 734, 744, 765, 768, 784, 777, 749, 639, 627}, 
 			18, true, true,124,702);
@@ -782,7 +813,6 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {625, 595, 601, 605, 619, 627, 631, 640, 627, 616, 614, 639, 655, 689, 690, 681, 690, 720, 721, 721, 712, 694, 671, 638, 623, }, 
 			25,739,695);
 			TileList.add(Black_Sea);
-
 			seaTile Adriatic = new seaTile("Adriatic",new int[] {427, 445, 450, 461, 466, 465, 491, 535, 539, 530, 483, 423, 428},
 					new int[] {635, 636, 647, 638, 639, 660, 688, 719, 756, 763, 719, 656, 638}, 
 					13,443,675);
