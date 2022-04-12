@@ -35,6 +35,7 @@ public class Player {
 		return name;
 	}
 	
+	
 	//dispose of units who do not belong to a tile
 	public void disposeUnits() {
 		for(landUnit Lu : army) {

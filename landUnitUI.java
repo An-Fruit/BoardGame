@@ -11,11 +11,11 @@ public class landUnitUI extends UnitUI {
 	boolean moveButtonPressed;
 	boolean supportButtonPressed;
 
-	public landUnitUI(landUnit u, boolean m, boolean s) {
+	public landUnitUI(landUnit u) {
 		super();
 		selectedUnit = u;
-		moveButtonPressed = m;
-		supportButtonPressed = s;
+		moveButtonPressed = false;
+		supportButtonPressed = false;
 		
 		final JButton move = new JButton("Move Unit");
 		move.addActionListener(new ActionListener() {

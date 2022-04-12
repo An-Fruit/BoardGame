@@ -220,7 +220,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			// generates the UI for ordering moves when a Unit is cliked on or a buildUI when a supply hub is clicked
 			
 			//if there's no panel currently pulled up and there is no unit on the tile and the tile has a supply hub, bring up the build panel
-			if (panel == null && currentTile.isHub && currentTile.occupier == null) {
+			if (panel == null && currentTile.isHub && currentTile.occupier == null && currentTile.possessor == playerID[turn]) {
 				selectedTile = currentTile;
 				buildUI pane = new buildUI();
 				panel = pane;
@@ -1013,24 +1013,45 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				s = f.next();
 				if(s.charAt(0) == 'F') {
 					playerMap.get(playerID[i]).setNation(France);
+					for(Tile t : France) {
+						t.possessor = playerID[i];
+					}
 				}
 				else if(s.charAt(0) == 'U') {
 					playerMap.get(playerID[i]).setNation(United_Kingdom);
+					for(Tile t : United_Kingdom) {
+						t.possessor = playerID[i];
+					}
 				}
 				else if(s.charAt(0) == 'R') {
 					playerMap.get(playerID[i]).setNation(Russia);
+					for(Tile t : Russia) {
+						t.possessor = playerID[i];
+					}
 				}
 				else if(s.charAt(0) == 'G') {
 					playerMap.get(playerID[i]).setNation(Germany);
+					for(Tile t : Germany) {
+						t.possessor = playerID[i];
+					}
 				}
 				else if(s.charAt(0) == 'I') {
 					playerMap.get(playerID[i]).setNation(Italy);
+					for(Tile t : Italy) {
+						t.possessor = playerID[i];
+					}
 				}
 				else if(s.charAt(0) == 'A') {
 					playerMap.get(playerID[i]).setNation(Austria);
+					for(Tile t : Austria) {
+						t.possessor = playerID[i];
+					}
 				}
 				else if(s.charAt(0) == 'O') {
 					playerMap.get(playerID[i]).setNation(Ottomans);
+					for(Tile t : Ottomans) {
+						t.possessor = playerID[i];
+					}
 				}
 			}
 			f.close();
