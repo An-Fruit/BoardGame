@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 
@@ -10,7 +11,7 @@ public class Unit extends JPanel{
 	Tile place;
 	char id;
 	public int strength;
-	Rectangle rect;
+	Polygon symbol;
 	boolean hasMoved;
 	/*
 	 * @param p - the identifier used to find the player the unit belongs to
@@ -21,11 +22,11 @@ public class Unit extends JPanel{
 	 * 
 	 * 
 	 */
-	public Unit(char p, Tile pl) {
+	public Unit(char p, Tile pl, Polygon pol) {
 		id = p;
 		place = pl;
 		strength = 1;
-		rect = new Rectangle(place.loc.x, place.loc.y, 5,5);
+		symbol = pol;
 		pl.occupier = this;
 		hasMoved = false;
 	}
@@ -34,10 +35,10 @@ public class Unit extends JPanel{
 		strength++;
 	}
 	//rectangle of what you're making
-	public void paintComponent( Graphics window )
+	public void paintComponent(Graphics window)
 	{
-		window.setColor(new Color(255,0,0,100));
-		window.drawRect(place.loc.x, place.loc.y, 50, 50);
+		symbol.translate(place.loc.x,  place.loc.y);
+		window.fillPolygon(symbol);
 
 	}
 

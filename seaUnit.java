@@ -1,16 +1,20 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Polygon;
 import java.awt.Toolkit;
 
 public class seaUnit extends Unit{
 	
-
+	Polygon symbol;
 	public boolean isConvoy;
 	public boolean hasMoved;
 	
 	public seaUnit(char p, Tile pl) {
 		super(p, pl);	
 		isConvoy = false;
+		
+
 	}
 	
 	public void reset() {
@@ -67,9 +71,12 @@ public class seaUnit extends Unit{
 		u.strength++;
 	}
 	
-	public void paintComponent(Graphics window) {
-		Image seaunitimg = Toolkit.getDefaultToolkit().getImage("seaUnit.png");
-		window.drawImage(seaunitimg, place.loc.x, place.loc.y,  25, 25, this);
+	public void paintComponent(Graphics window, Color col) {
+//		Image seaunitimg = Toolkit.getDefaultToolkit().getImage("seaUnit.png");
+//		window.drawImage(seaunitimg, place.loc.x, place.loc.y,  25, 25, this);
+		window.setColor(col);
+		symbol.translate(place.loc.x - 15, place.loc.y - 15);
+		window.fillPolygon(symbol);
 		
 	}
 	

@@ -111,42 +111,99 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		//territory colors
 		for(char c : playerID) {
 			Color color = new Color(255, 255, 255, 100);
-			if(c == 'A') {
-				color = new Color(255, 0, 0, 100);
-			}
-			else if(c == 'B') {
-				color = new Color(0,255,0,100);
-			}
-			else if(c == 'C') {
-				color = new Color(0,0,255,100);
-			}
-			else if(c == 'D') {
-				color = new Color(255,200,0,100);
-			}
-			else if(c == 'E') {
-				color = new Color(175,0,255,100);
-			}
-			else if(c == 'F') {
-				color = new Color(0,255,60,100);
-			}
-			else if(c == 'G') {
-				color = new Color(250,250,60,100);
+			switch(c) {
+			//red
+			case 'A': color = new Color(255, 0, 0, 100);
+					break;
+			//green
+			case 'B': color = new Color(0,255,0,100);
+					break;
+					
+			//blue
+			case 'C': color = new Color(0,0,255,100);
+					break;
+			//
+			case 'D': color = new Color(200,200,0,100);
+					break;
+			case 'E': color = new Color(175,0,255,100);
+					break;
+			case 'F': color = new Color(100,255,100,100);
+					break;
+			case 'G': color = new Color(150,150,50,100);
+					break;
+			case 'H': color = new Color(0,255,255,100);
+					break;
 			}
 			window.setColor(color);
 			for(Tile t : playerMap.get(c).getTiles()) {
 				window.fillPolygon(t.collisionhull);
 			}
+			
 		}
 		
 		
 		//draw the all units on the board
 		for(char c : playerID) {
-			for(landUnit Lu: playerMap.get(c).getArmy()) {
-				Lu.paintComponent(window);
-				
+			Color color = new Color(500);
+			
+			//render units
+			for(landUnit Lu: playerMap.get(c).getArmy()) {	
+//				Lu.paintComponent(window);
+				switch(Lu.id) {
+				//red
+				case 'A': color = new Color(255, 0, 0, 100);
+						break;
+				//green
+				case 'B': color = new Color(0,255,0,100);
+						break;
+						
+				//blue
+				case 'C': color = new Color(0,0,255,255);
+						break;
+				//
+				case 'D': color = new Color(200,200,0,255);
+						break;
+				case 'E': color = new Color(175,0,255,255);
+						break;
+				case 'F': color = new Color(100,255,100,255);
+						break;
+				case 'G': color = new Color(150,150,50,255);
+						break;
+				case 'H': color = new Color(0,255,255,255);
+						break;
+				}
+//				color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
+				Lu.paintComponent(window, color);		
 			}
+			
 			for(seaUnit Su : playerMap.get(c).getFleet()) {
-				Su.paintComponent(window);
+//				Su.paintComponent(window);
+				switch(Su.id) {
+				//red
+				case 'A': color = new Color(255, 0, 0, 255);
+						break;
+				//green
+				case 'B': color = new Color(0,255,0,255);
+						break;
+						
+				//blue
+				case 'C': color = new Color(0,0,255,255);
+						break;
+				//
+				case 'D': color = new Color(200,200,0,255);
+						break;
+				case 'E': color = new Color(175,0,255,255);
+						break;
+				case 'F': color = new Color(100,255,100,255);
+						break;
+				case 'G': color = new Color(150,150,50,255);
+						break;
+				case 'H': color = new Color(0,255,255,255);
+						break;
+				}
+				
+//				color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
+				Su.paintComponent(window, color);
 			}
 		}
 		
@@ -190,7 +247,14 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				}
 			}
 		
-			// if a button has been clicked to order a move, the move will be executed
+			/*
+			 * section to execute moves
+			 * 
+			 * 
+			 * 
+			 */
+			
+			
 			//build units
 			if (panel != null && panel instanceof buildUI ) {
 				buildUI use = (buildUI)panel;
@@ -204,36 +268,54 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				}
 			}
 			
-			//move land units
+			//move/fortify land units
 			if (panel != null  && selectedTile.occupier!= null && panel instanceof landUnitUI ) {
 				landUnitUI use = (landUnitUI) panel;
 				landUnit chosenUnit = (landUnit)selectedTile.occupier;
+				//move land units
 				if (use.moveButtonPressed) {
-					chosenUnit.move(currentTile);
+					List adjList = Arrays.asList(selectedTile.adjacencyList);
+					if(adjList.contains(currentTile)) {
+						chosenUnit.move(currentTile);
+					}
+					else {
+						System.out.println("You cannot move a unit to a nonadjacent tile");
+					}
+					
 					for(char c : playerID) {
 						playerMap.get(c).disposeUnits();
 					}
 					panel = null;
 				}
-				else if (use.moveButtonPressed) {
+				//fortify land units
+				else if (use.supportButtonPressed) {
 					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
 						chosenUnit.support(currentTile.occupier);
 						panel = null;
 					}
 				}
 			}
+			
 			//move sea units
 			else if (panel != null  && selectedTile.occupier!= null ) {
 				seaUnitUI use = (seaUnitUI) panel;
 				seaUnit chosenUnit = (seaUnit) selectedTile.occupier;
 				if (use.moveButtonPressed) {
-					chosenUnit.move(currentTile);
+					List adjList = Arrays.asList(selectedTile.adjacencyList);
+					if(adjList.contains(currentTile)) {
+						
+						chosenUnit.move(currentTile);
+					
+					}
+					else {
+						System.out.println("You cannot move a unit to a nonadjacent tile");
+					}
 					for(char c : playerID) {
 						playerMap.get(c).disposeUnits();
 					}
 					panel = null;
 				}
-				else if (use.moveButtonPressed) {
+				else if (use.supportButtonPressed) {
 					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit) {
 						chosenUnit.support((seaUnit)currentTile.occupier);
 						panel = null;
@@ -504,6 +586,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			new int[] {606, 588, 557, 552, 565, 594, 603, 624, 628, 639, 649, 643, 624, 624, 606}, 
 			15, false, true,526,611);
 			TileList.add(Hungary);
+			Austria.add(Hungary);
 			
 			landTile Vienna = new landTile("Vienna", new int[] {480, 506, 517, 538, 547, 526, 507, 497, 479, 486, 475, 480},
 			new int[] {554, 550, 552, 551, 556, 583, 592, 605, 603, 581, 567, 554}, 

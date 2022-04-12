@@ -1,12 +1,16 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Polygon;
 import java.awt.Toolkit;
 
 public class landUnit extends Unit{
 	
-	
+	Polygon symbol;
 	public landUnit(char p, Tile pl) {
 		super(p, pl);
+		symbol = new Polygon(new int[] {0,0,25,25}, new int[] {0,25,25,0}, 4);
+
 	}
 	
 	public void reset() {
@@ -52,9 +56,12 @@ public class landUnit extends Unit{
 		u.strength ++;
 	}
 	
-	public void paintComponent(Graphics window) {
-		Image landunitimg = Toolkit.getDefaultToolkit().getImage("ArmyUnit.png");
-		window.drawImage(landunitimg, place.loc.x-50, place.loc.y-50, 50, 50, this);
+	public void paintComponent(Graphics window, Color col) {
+//		Image landunitimg = Toolkit.getDefaultToolkit().getImage("ArmyUnit.png");
+//		window.drawImage(landunitimg, place.loc.x-50, place.loc.y-50, 50, 50, this);
+		window.setColor(col);
+		symbol.translate(place.loc.x - 15, place.loc.y - 15);
+		window.fillPolygon(symbol);
 	}
 	
 	
