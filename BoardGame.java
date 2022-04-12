@@ -70,9 +70,6 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		//highlights the tile & changes the highlight color based on whose turn it currently is
 		for (Tile t: TileList) {
-			if (t.occupier != null) {
-				t.occupier.paintComponent(window);
-			}
 			if(t.isInside(mouseX, mouseY)) {
 				currentTile = t;
 				Color color = new Color(255,255,255,50);

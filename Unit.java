@@ -11,7 +11,6 @@ public class Unit extends JPanel{
 	Tile place;
 	char id;
 	public int strength;
-	Polygon symbol;
 	boolean hasMoved;
 	/*
 	 * @param p - the identifier used to find the player the unit belongs to
@@ -22,11 +21,10 @@ public class Unit extends JPanel{
 	 * 
 	 * 
 	 */
-	public Unit(char p, Tile pl, Polygon pol) {
+	public Unit(char p, Tile pl) {
 		id = p;
 		place = pl;
 		strength = 1;
-		symbol = pol;
 		pl.occupier = this;
 		hasMoved = false;
 	}
@@ -37,8 +35,7 @@ public class Unit extends JPanel{
 	//rectangle of what you're making
 	public void paintComponent(Graphics window)
 	{
-		symbol.translate(place.loc.x,  place.loc.y);
-		window.fillPolygon(symbol);
+	
 
 	}
 

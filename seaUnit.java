@@ -75,9 +75,8 @@ public class seaUnit extends Unit{
 //		Image seaunitimg = Toolkit.getDefaultToolkit().getImage("seaUnit.png");
 //		window.drawImage(seaunitimg, place.loc.x, place.loc.y,  25, 25, this);
 		window.setColor(col);
-		symbol.translate(place.loc.x - 15, place.loc.y - 15);
+		symbol = new Polygon(new int[] {place.loc.x - 7, place.loc.x, place.loc.x + 7}, new int[] {place.loc.y - 7, place.loc.y, place.loc.y - 7}, 3);
 		window.fillPolygon(symbol);
-		
 	}
 	
 	
