@@ -15,7 +15,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -45,10 +44,14 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 	Tile selectedTile;
 	PrintWriter writer;
 	
-	
 
 	public void paint( Graphics window )
 	{
+		for(Tile t : TileList) {
+			if(t.possessor != 'Z') {
+				playerMap.get(t.possessor).getTiles().add(t);
+			}
+		}
 		//print year and turn for debug purposes
 		//System.out.println("yr: " + year + " turn: " + turn); 
 		
@@ -69,7 +72,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		window.drawString("mouseLoc: " + mouseX+ " " + mouseY,850 , 100);
 		
-		window.drawString("turn number: " + turn, 200, 100);
+		window.drawString("turn number: " + turn, 100, 100);
 		
 		
 		//highlights the tile & changes the highlight color based on whose turn it currently is
@@ -88,15 +91,19 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				//blue
 				case 2: color = new Color(0,0,255,100);
 						break;
-				//
-				case 3: color = new Color(255,200,0,100);
+				//yellow
+				case 3: color = new Color(255,255,0,100);
 						break;
+				//purple
 				case 4: color = new Color(175,0,255,100);
 						break;
-				case 5: color = new Color(0,255,60,100);
+				//lime
+				case 5: color = new Color(100,255,100,100);
 						break;
-				case 6: color = new Color(250,250,60,100);
+				//dark yellow
+				case 6: color = new Color(150,150,50,100);
 						break;
+				//cyan
 				case 7: color = new Color(0,255,255,100);
 						break;
 				}
@@ -123,11 +130,13 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			//blue
 			case 'C': color = new Color(0,0,255,100);
 					break;
-			//
-			case 'D': color = new Color(200,200,0,100);
+			//yellow
+			case 'D': color = new Color(255,255,0,100);
 					break;
+			//purple
 			case 'E': color = new Color(175,0,255,100);
 					break;
+			//lime
 			case 'F': color = new Color(100,255,100,100);
 					break;
 			case 'G': color = new Color(150,150,50,100);
@@ -135,6 +144,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			case 'H': color = new Color(0,255,255,100);
 					break;
 			}
+			//renders territory colors based off of what each player is in possession of
 			window.setColor(color);
 			for(Tile t : playerMap.get(c).getTiles()) {
 				window.fillPolygon(t.collisionhull);
@@ -152,17 +162,17 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 //				Lu.paintComponent(window);
 				switch(Lu.id) {
 				//red
-				case 'A': color = new Color(255, 0, 0, 100);
+				case 'A': color = new Color(255, 0, 0, 255);
 						break;
 				//green
-				case 'B': color = new Color(0,255,0,100);
+				case 'B': color = new Color(0,255,0,255);
 						break;
 						
 				//blue
 				case 'C': color = new Color(0,0,255,255);
 						break;
 				//
-				case 'D': color = new Color(200,200,0,255);
+				case 'D': color = new Color(255,255,0,255);
 						break;
 				case 'E': color = new Color(175,0,255,255);
 						break;
@@ -191,7 +201,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				case 'C': color = new Color(0,0,255,255);
 						break;
 				//
-				case 'D': color = new Color(200,200,0,255);
+				case 'D': color = new Color(255,255,0,255);
 						break;
 				case 'E': color = new Color(175,0,255,255);
 						break;
@@ -203,6 +213,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 						break;
 				}
 				
+//				color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
 				Su.paintComponent(window, color);
 			}
 		}
@@ -211,8 +222,9 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			panel.moveToFront();
 		}
 		
+		
+//		
 	}
-	//on click, figure out the x/y values and iterate the turns
 	public void mouseClicked(MouseEvent e) {
 		//since you only need to check when someone wins when the turn is advanced, game logic is here
 		
@@ -357,19 +369,171 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		//checks all players to see whether one of them has controlled the majority of supply hubs and therefore won
 		
-//		for(char c : playerMap.keySet()) {
-//			if(playerMap.get(c).hubCnt > 16) {
-//				endGame = true;
-//				winnerID = c;
-//				return;
-//			}
-//		}
+		for(char c : playerMap.keySet()) {
+			if(playerMap.get(c).hubCnt > 16) {
+				endGame = true;
+				winnerID = c;
+				return;
+			}
+		}
 		
 
 		
 		
 		
 	}
+	//on click, figure out the x/y values and iterate the turns
+//	public void mouseClicked(MouseEvent e) {
+//		//since you only need to check when someone wins when the turn is advanced, game logic is here
+//		
+//		//if there have been too many years, the game ends
+//		if(e.getButton() == 1) {
+//			// generates the UI for ordering moves when a Unit is cliked on or a buildUI when a supply hub is clicked
+//			
+//			//if there's no panel currently pulled up and there is no unit on the tile and the tile has a supply hub, bring up the build panel
+//			if (panel == null && currentTile.isHub && currentTile.occupier == null && currentTile.possessor == playerID[turn]) {
+//				selectedTile = currentTile;
+//				buildUI pane = new buildUI();
+//				panel = pane;
+//				desktop.add(panel);
+//			}
+//			
+//			//if there is a unit on the tile, bring up the land unit UI or the sea unit UI depending on what type of unit it is
+//			else if (panel == null && currentTile.occupier != null) {
+//				selectedTile = currentTile;
+//				if (selectedTile.occupier instanceof landUnit) {
+//					selectedTile.occupier = currentTile.occupier;
+//					landUnitUI pane = new landUnitUI((landUnit)selectedTile.occupier);
+//					panel = pane;
+//					desktop.add(panel);
+//				}
+//				else {
+//					selectedTile.occupier = currentTile.occupier;
+//					seaUnitUI pane = new seaUnitUI((seaUnit)selectedTile.occupier);
+//					panel = pane;
+//					desktop.add(panel);
+//				}
+//			}
+//		
+//			/*
+//			 * section to execute moves
+//			 * 
+//			 * 
+//			 * 
+//			 */
+//			
+//			
+//			//build units
+//			if (panel != null && panel instanceof buildUI ) {
+//				buildUI use = (buildUI)panel;
+//				if (use.buildFleetButton) {
+//					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
+//					panel = null;
+//				}
+//				else if (use.buildLandUnit) {
+//					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
+//					panel = null;
+//				}
+//			}
+//			
+//			//move/fortify land units
+//			if (panel != null  && selectedTile.occupier!= null && panel instanceof landUnitUI ) {
+//				landUnitUI use = (landUnitUI) panel;
+//				landUnit chosenUnit = (landUnit)selectedTile.occupier;
+//				//move land units
+//				if (use.moveButtonPressed) {
+//					List adjList = Arrays.asList(selectedTile.adjacencyList);
+//					if(adjList.contains(currentTile)) {
+//						chosenUnit.move(currentTile);
+//					}
+//					else {
+//						System.out.println("You cannot move a unit to a nonadjacent tile");
+//					}
+//					
+//					for(char c : playerID) {
+//						playerMap.get(c).disposeUnits();
+//					}
+//					panel = null;
+//				}
+//				//fortify land units
+//				else if (use.supportButtonPressed) {
+//					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
+//						chosenUnit.support(currentTile.occupier);
+//						panel = null;
+//					}
+//				}
+//			}
+//			
+//			//move sea units
+//			else if (panel != null  && selectedTile.occupier!= null ) {
+//				seaUnitUI use = (seaUnitUI) panel;
+//				seaUnit chosenUnit = (seaUnit) selectedTile.occupier;
+//				if (use.moveButtonPressed) {
+//					List adjList = Arrays.asList(selectedTile.adjacencyList);
+//					if(adjList.contains(currentTile)) {
+//						
+//						chosenUnit.move(currentTile);
+//					
+//					}
+//					else {
+//						System.out.println("You cannot move a unit to a nonadjacent tile");
+//					}
+//					for(char c : playerID) {
+//						playerMap.get(c).disposeUnits();
+//					}
+//					panel = null;
+//				}
+//				else if (use.supportButtonPressed) {
+//					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit) {
+//						chosenUnit.support((seaUnit)currentTile.occupier);
+//						panel = null;
+//					}
+//				}	
+//			}
+//			//reset the panel to null when closing
+//			if (panel != null && panel.isClosed()) {
+//				panel = null;
+//			}
+//		}
+//		
+//		//on middle mouse
+//		else if(e.getButton() == 2) {
+//			
+//		}
+//		
+//		//on right click
+//		else {
+//			if(year > 1980) {
+//				endGame = true;
+//				return;
+//			}
+//			if(turn >= playerID.length - 1) {
+//				turn = 0;
+//				year++;
+//			}
+//			else {
+//				turn++;
+//			}
+//			System.out.println("Year: " + year + " Turn: " + turn);
+//			System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
+//		}
+//		//if all players have gone, the "year" advances
+//		
+//		//checks all players to see whether one of them has controlled the majority of supply hubs and therefore won
+//		
+////		for(char c : playerMap.keySet()) {
+////			if(playerMap.get(c).hubCnt > 16) {
+////				endGame = true;
+////				winnerID = c;
+////				return;
+////			}
+////		}
+//		
+//
+//		
+//		
+//		
+//	}
 
 	public void mousePressed(MouseEvent e) {
 		
@@ -436,7 +600,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			addKeyListener(this);
 			setVisible(true);
 			setSize(990,900);
-
+			
 			
 			//list of tiles & players by playerID
 			TileList = new ArrayList<>();
@@ -453,16 +617,15 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			currentTile = null;
 			selectedTile = null;
 			
-			// intitializes Printwriter
-			try {
-				writer = new PrintWriter(new File("order.txt"));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			//asks for the amount of players and the player ID array
 			Scanner f = new Scanner(System.in);
+			
+			try {
+				writer = new PrintWriter(new File("order.txt"));
+			}
+			catch(Exception e) {
+				
+			}
 			System.out.println("How many players would you like to have in this game? (3-7 allowed)");
 			int temp = f.nextInt();
 			if(temp >= 3 && temp <= 7) playerID = new char[temp];
@@ -481,13 +644,13 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			System.out.println("Pressing any key on the keyboard will advance turns");
 			
 	/*****************************************ADDING TILES************************************************************************************************/
-			ArrayList<Tile> United_Kingdom = new ArrayList<>();
-			ArrayList<Tile> France = new ArrayList<>();
-			ArrayList<Tile> Germany = new ArrayList<>();
-			ArrayList<Tile> Russia = new ArrayList<>();
-			ArrayList<Tile> Ottomans = new ArrayList<>();
-			ArrayList<Tile> Italy = new ArrayList<>();
-			ArrayList<Tile> Austria = new ArrayList<>();
+			HashSet<Tile> United_Kingdom = new HashSet<>();
+			HashSet<Tile> France = new HashSet<>();
+			HashSet<Tile> Germany = new HashSet<>();
+			HashSet<Tile> Russia = new HashSet<>();
+			HashSet<Tile> Ottomans = new HashSet<>();
+			HashSet<Tile> Italy = new HashSet<>();
+			HashSet<Tile> Austria = new HashSet<>();
 			
 			
 			landTile Petrograd = new landTile("Petrograd", new int[] {989, 988, 864, 742, 672, 641, 669, 673, 632, 667, 988},

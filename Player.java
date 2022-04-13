@@ -1,11 +1,12 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Player {
 	
 	String name;
 	ArrayList<landUnit> army;
 	ArrayList<seaUnit> fleet;
-	ArrayList<Tile> tilesOwned;
+	HashSet<Tile> tilesOwned;
 	int hubCnt;
 	
 	
@@ -13,10 +14,10 @@ public class Player {
 		name = n;
 		army  = new ArrayList<>();
 		fleet  = new ArrayList<>();
-		tilesOwned = new ArrayList<>();
+		tilesOwned = new HashSet<>();
 		hubCnt = 0;
 	}
-	public void setNation(ArrayList<Tile> list) {
+	public void setNation(HashSet<Tile> list) {
 		tilesOwned = list;
 	}
 	public ArrayList<seaUnit> getFleet(){
@@ -25,7 +26,7 @@ public class Player {
 	public ArrayList<landUnit> getArmy(){
 		return army;
 	}
-	public ArrayList<Tile> getTiles(){
+	public HashSet<Tile> getTiles(){
 		return tilesOwned;
 	}
 	public void addArmy(landUnit u) {

@@ -13,6 +13,7 @@ public class seaUnit extends Unit{
 	public seaUnit(char p, Tile pl) {
 		super(p, pl);	
 		isConvoy = false;
+		
 
 	}
 	
@@ -67,12 +68,7 @@ public class seaUnit extends Unit{
 	}
 	
 	public void support(seaUnit u) {
-		if (u.equals(this)) {
-			
-		}
-		else {
-			u.strength++;
-		}
+		u.strength++;
 	}
 	
 	public void paintComponent(Graphics window, Color col) {
