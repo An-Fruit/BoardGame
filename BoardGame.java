@@ -15,6 +15,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -269,11 +270,13 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			if (panel != null && panel instanceof buildUI ) {
 				buildUI use = (buildUI)panel;
 				if (use.buildFleetButton) {
-					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
+					writer.println(playerID[turn] + " build_seaUnit " + selectedTile.name);
+//					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
 					panel = null;
 				}
 				else if (use.buildLandUnit) {
-					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
+					writer.println(playerID[turn] + " build_landUnit " + selectedTile.name);
+//					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
 					panel = null;
 				}
 			}
@@ -287,21 +290,21 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 					List adjList = Arrays.asList(selectedTile.adjacencyList);
 					if(adjList.contains(currentTile)) {
 						writer.println(playerID[turn] + " " + currentTile.name + " move " + selectedTile.name);
-						chosenUnit.move(currentTile);
+//						chosenUnit.move(currentTile);
 					}
 					else {
 						System.out.println("You cannot move a unit to a nonadjacent tile");
 					}
-					for(char c : playerID) {
-						playerMap.get(c).disposeUnits();
-					}
+//					for(char c : playerID) {
+//						playerMap.get(c).disposeUnits();
+//					}
 					panel = null;
 				}
 				//fortify land units
 				else if (use.supportButtonPressed) {
 					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
 						writer.println(playerID[turn] + " " + currentTile + " support " + selectedTile.name);
-						chosenUnit.support(currentTile.occupier);
+//						chosenUnit.support(currentTile.occupier);
 						panel = null;
 					}
 				}
@@ -315,20 +318,20 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 					List adjList = Arrays.asList(selectedTile.adjacencyList);
 					if(adjList.contains(currentTile)) {
 						writer.println(playerID[turn] + " " + currentTile + " move " + selectedTile.name);
-						chosenUnit.move(currentTile);
+//						chosenUnit.move(currentTile);
 					}
 					else {
 						System.out.println("You cannot move a unit to a nonadjacent tile");
 					}
-					for(char c : playerID) {
-						playerMap.get(c).disposeUnits();
-					}
+//					for(char c : playerID) {
+//						playerMap.get(c).disposeUnits();
+//					}
 					panel = null;
 				}
 				else if (use.supportButtonPressed) {
 					if (currentTile.occupier != null) {
 						writer.println(playerID[turn] + " " + currentTile + " support " + selectedTile.name);
-						chosenUnit.support((seaUnit)currentTile.occupier);
+//						chosenUnit.support((seaUnit)currentTile.occupier);
 						panel = null;
 					}
 				}
@@ -349,6 +352,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		//on right click
 		else {
+			writer.flush();
 			if(year > 1980) {
 				endGame = true;
 				return;
@@ -356,6 +360,12 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			if(turn >= playerID.length - 1) {
 				turn = 0;
 				year++;
+				try {
+					execute();
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			else {
 				turn++;
@@ -363,7 +373,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			System.out.println("Year: " + year + " Turn: " + turn);
 			System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
 			
-			writer.flush();
+			
 		}
 		//if all players have gone, the "year" advances
 		
@@ -381,6 +391,63 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		
 		
+	}
+	
+	public void execute() throws FileNotFoundException {
+		Scanner f  = new Scanner(new File("order.txt"));
+		while(f.hasNext()) {
+			String[] command = f.nextLine().trim().split(" ");
+			//execute building of units
+			if(command[1].equals("build_landUnit")) {
+				for(Tile t : playerMap.get(command[0].charAt(0)).getTiles()) {
+					if(t.name.equals(command[2])) {
+						playerMap.get(command[0].charAt(0)).getArmy().add(new landUnit(command[0].charAt(0), t));
+					}
+				}
+			}
+			else if(command[1].equals("build_seaUnit")) {
+				for(Tile t : playerMap.get(command[0].charAt(0)).getTiles()) {
+					if(t.name.equals(command[2])) {
+						playerMap.get(command[0].charAt(0)).getArmy().add(new landUnit(command[0].charAt(0), t));
+					}
+				}
+			}
+			//if not building, then you must be moving/supporting
+			else {
+				if(command[2].equals("move")) {
+					
+					for(Tile t : playerMap.get(command[0].charAt(0)).getTiles()) {
+						if(t.name.equals(command[3])) {
+							if(t.occupier instanceof landUnit) {
+								for(Tile t1 : TileList) {
+									if(t1.name.equals(command[1])) {
+										t.occupier.move(t1);
+										playerMap.get(command[0].charAt(0)).disposeUnits();
+										break;
+									}
+								}
+							}
+							else {
+								for(Tile t1 : TileList) {
+									if(t1.name.equals(command[1])) {
+										t.occupier.move(t1);
+										playerMap.get(command[0].charAt(0)).disposeUnits();
+										break;
+									}
+								}
+								break;
+							}
+						}
+					}
+					
+					
+					
+				}
+				else if(command[2].equals("support")) {
+					
+				}
+			}
+		}
 	}
 	//on click, figure out the x/y values and iterate the turns
 //	public void mouseClicked(MouseEvent e) {

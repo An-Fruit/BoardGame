@@ -39,4 +39,9 @@ public class Unit extends JPanel{
 
 	}
 
+	public void move(Tile t) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
