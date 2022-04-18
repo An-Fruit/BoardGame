@@ -41,9 +41,10 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 	Tile currentTile;
 	JDesktopPane desktop;
 	UnitUI panel; 
-	buildUI buildPanel;
 	Tile selectedTile;
 	PrintWriter writer;
+	ConsoleUI console;
+	File orders;
 	
 
 	public void paint( Graphics window )
@@ -53,10 +54,10 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				playerMap.get(t.possessor).getTiles().add(t);
 			}
 		}
+		
+		
 		//print year and turn for debug purposes
 		//System.out.println("yr: " + year + " turn: " + turn); 
-		
-		
 		
 		//checks all the players to see if one of them has won through controlling most supply hubs
 		// render everything
@@ -67,14 +68,47 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		//draw the map to the canvas
 		Image map = Toolkit.getDefaultToolkit().getImage("DiploMap.png");
+		Image console = Toolkit.getDefaultToolkit().getImage("Console.png");
 		
+		window.drawImage(console, 990,0, 450, 900, this);
+
 		window.drawImage(map, 0, 0, 990, 900, this);
-//		window.drawImage(map, 0, 0, 1000, 1000, this);
 		
 		window.drawString("mouseLoc: " + mouseX+ " " + mouseY,850 , 100);
 		
 		window.drawString("turn number: " + turn, 100, 100);
 		
+		try {
+			Scanner scan = new Scanner(orders);
+			while (scan.hasNext() && !scan.nextLine().equals(year+"")) {
+				scan.nextLine();
+			}
+			int inc = 0;
+			while(scan.hasNext()) {
+				String[] dec = scan.nextLine().split(" ");
+				String prin = "";
+				if (dec[1].equals("build_landUnit")) {
+					prin += "build army " + dec[2];
+				}
+				else if (dec[1].equals("build_seaUnit")) {
+					prin += "build fleet " + dec[2];
+				}
+				else if (dec[2].equals("move")) {
+					prin += dec[1] + " moves to " + dec[3];
+				}
+				else if (dec[2].equals("support")) {
+					prin += dec[1] + " supports " + dec[3];
+				}
+				else if (dec[2].equals("support")) {
+					prin += dec[1] + " supports " + dec[3];
+				}
+				inc +=15;
+				window.drawString(prin, 1020, 50 + inc);
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//highlights the tile & changes the highlight color based on whose turn it currently is
 		for (Tile t: TileList) {
@@ -160,7 +194,6 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			
 			//render units
 			for(landUnit Lu: playerMap.get(c).getArmy()) {	
-//				Lu.paintComponent(window);
 				switch(Lu.id) {
 				//red
 				case 'A': color = new Color(255, 0, 0, 255);
@@ -184,12 +217,10 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				case 'H': color = new Color(0,255,255,255);
 						break;
 				}
-//				color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
 				Lu.paintComponent(window, color);		
 			}
 			
 			for(seaUnit Su : playerMap.get(c).getFleet()) {
-//				Su.paintComponent(window);
 				switch(Su.id) {
 				//red
 				case 'A': color = new Color(255, 0, 0, 255);
@@ -214,23 +245,20 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 						break;
 				}
 				
-//				color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
 				Su.paintComponent(window, color);
 			}
 		}
 		
 		if (panel != null) {
 			panel.moveToFront();
+			
 		}
-		
-		
-//		
 	}
 	public void mouseClicked(MouseEvent e) {
 		//since you only need to check when someone wins when the turn is advanced, game logic is here
 		
-		//if there have been too many years, the game ends
 		if(e.getButton() == 1) {
+			writer.flush();
 			// generates the UI for ordering moves when a Unit is cliked on or a buildUI when a supply hub is clicked
 			
 			//if there's no panel currently pulled up and there is no unit on the tile and the tile has a supply hub, bring up the build panel
@@ -261,82 +289,91 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			/*
 			 * section to execute moves
 			 * 
-			 * 
-			 * 
 			 */
-			
 			
 			//build units
 			if (panel != null && panel instanceof buildUI ) {
+				System.out.println(1);
 				buildUI use = (buildUI)panel;
+				System.out.println(1);
 				if (use.buildFleetButton) {
+					System.out.println(2);
 					writer.println(playerID[turn] + " build_seaUnit " + selectedTile.name);
-//					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
+					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
 					panel = null;
+					writer.flush();
 				}
 				else if (use.buildLandUnit) {
 					writer.println(playerID[turn] + " build_landUnit " + selectedTile.name);
-//					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
+					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
 					panel = null;
+					writer.flush();
 				}
 			}
 			
 			//move/fortify land units
-			if (panel != null  && selectedTile.occupier!= null && panel instanceof landUnitUI ) {
+			else if (panel != null  && selectedTile.occupier!= null && panel instanceof landUnitUI && selectedTile.occupier.id == playerID[turn] ) {
 				landUnitUI use = (landUnitUI) panel;
 				landUnit chosenUnit = (landUnit)selectedTile.occupier;
 				//move land units
 				if (use.moveButtonPressed) {
 					List adjList = Arrays.asList(selectedTile.adjacencyList);
 					if(adjList.contains(currentTile)) {
-						writer.println(playerID[turn] + " " + currentTile.name + " move " + selectedTile.name);
-//						chosenUnit.move(currentTile);
+						writer.println(playerID[turn] + " " + selectedTile.name + " move " + currentTile.name);
+						chosenUnit.move(currentTile);
+						writer.flush();
 					}
 					else {
 						System.out.println("You cannot move a unit to a nonadjacent tile");
 					}
-//					for(char c : playerID) {
-//						playerMap.get(c).disposeUnits();
-//					}
+					for(char c : playerID) {
+						playerMap.get(c).disposeUnits();
+					}
 					panel = null;
 				}
 				//fortify land units
 				else if (use.supportButtonPressed) {
 					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
-						writer.println(playerID[turn] + " " + currentTile + " support " + selectedTile.name);
-//						chosenUnit.support(currentTile.occupier);
+						writer.println(playerID[turn] + " " + selectedTile.name + " support " + currentTile.name);
+						chosenUnit.support(currentTile.occupier);
 						panel = null;
+						writer.flush();
 					}
 				}
 			}
 			
 			//move sea units
-			else if (panel != null  && selectedTile.occupier!= null ) {
+			else if (panel != null  && selectedTile.occupier!= null && selectedTile.occupier.id == playerID[turn]) {
 				seaUnitUI use = (seaUnitUI) panel;
 				seaUnit chosenUnit = (seaUnit) selectedTile.occupier;
 				if (use.moveButtonPressed) {
 					List adjList = Arrays.asList(selectedTile.adjacencyList);
 					if(adjList.contains(currentTile)) {
-						writer.println(playerID[turn] + " " + currentTile + " move " + selectedTile.name);
-//						chosenUnit.move(currentTile);
+						writer.println(playerID[turn] + " " + selectedTile.name + " move " + currentTile.name);
+						chosenUnit.move(currentTile);
+						writer.flush();
 					}
 					else {
 						System.out.println("You cannot move a unit to a nonadjacent tile");
 					}
-//					for(char c : playerID) {
-//						playerMap.get(c).disposeUnits();
-//					}
+					for(char c : playerID) {
+						playerMap.get(c).disposeUnits();
+					}
 					panel = null;
 				}
 				else if (use.supportButtonPressed) {
 					if (currentTile.occupier != null) {
-						writer.println(playerID[turn] + " " + currentTile + " support " + selectedTile.name);
-//						chosenUnit.support((seaUnit)currentTile.occupier);
+						writer.println(playerID[turn] + " " + selectedTile.name + " support " + currentTile.name);
+						chosenUnit.support((seaUnit)currentTile.occupier);
 						panel = null;
+						writer.flush();
 					}
 				}
 				else if (use.convoyButtonPressed){
 					chosenUnit.isConvoy = true;
+					writer.println(playerID[turn] + " " + selectedTile.name + " convoy ");
+					writer.flush();
+					panel = null;
 				}
 			}
 			//reset the panel to null when closing
@@ -352,33 +389,36 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		//on right click
 		else {
-			writer.flush();
-			if(year > 1980) {
-				endGame = true;
-				return;
-			}
+			panel = null;
+			
 			if(turn >= playerID.length - 1) {
 				turn = 0;
 				year++;
+				writer.println(year+"");
+				writer.flush();
+				
 				try {
-					execute();
+					execute(orders);
 				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
+			}
+			else if(year > 1980) {
+				endGame = true;
+				return;
 			}
 			else {
+				writer.flush();
 				turn++;
 			}
 			System.out.println("Year: " + year + " Turn: " + turn);
 			System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
 			
-			
 		}
 		//if all players have gone, the "year" advances
 		
 		//checks all players to see whether one of them has controlled the majority of supply hubs and therefore won
-		
 		for(char c : playerMap.keySet()) {
 			if(playerMap.get(c).hubCnt > 16) {
 				endGame = true;
@@ -386,221 +426,17 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				return;
 			}
 		}
-		
-
-		
-		
-		
 	}
 	
-	public void execute() throws FileNotFoundException {
-		Scanner f  = new Scanner(new File("order.txt"));
-		while(f.hasNext()) {
-			String[] command = f.nextLine().trim().split(" ");
-			//execute building of units
-			if(command[1].equals("build_landUnit")) {
-				for(Tile t : playerMap.get(command[0].charAt(0)).getTiles()) {
-					if(t.name.equals(command[2])) {
-						playerMap.get(command[0].charAt(0)).getArmy().add(new landUnit(command[0].charAt(0), t));
-					}
-				}
-			}
-			else if(command[1].equals("build_seaUnit")) {
-				for(Tile t : playerMap.get(command[0].charAt(0)).getTiles()) {
-					if(t.name.equals(command[2])) {
-						playerMap.get(command[0].charAt(0)).getArmy().add(new landUnit(command[0].charAt(0), t));
-					}
-				}
-			}
-			//if not building, then you must be moving/supporting
-			else {
-				if(command[2].equals("move")) {
-					
-					for(Tile t : playerMap.get(command[0].charAt(0)).getTiles()) {
-						if(t.name.equals(command[3])) {
-							if(t.occupier instanceof landUnit) {
-								for(Tile t1 : TileList) {
-									if(t1.name.equals(command[1])) {
-										t.occupier.move(t1);
-										playerMap.get(command[0].charAt(0)).disposeUnits();
-										break;
-									}
-								}
-							}
-							else {
-								for(Tile t1 : TileList) {
-									if(t1.name.equals(command[1])) {
-										t.occupier.move(t1);
-										playerMap.get(command[0].charAt(0)).disposeUnits();
-										break;
-									}
-								}
-								break;
-							}
-						}
-					}
-					
-					
-					
-				}
-				else if(command[2].equals("support")) {
-					
-				}
-			}
+	public void execute(File f) throws FileNotFoundException {
+		Scanner scan = new Scanner(f);
+		
+		while (!scan.nextLine().trim().equals((year-1)+"")) {
+			scan.nextLine();
 		}
+		System.out.println(scan.nextLine());
+		
 	}
-	//on click, figure out the x/y values and iterate the turns
-//	public void mouseClicked(MouseEvent e) {
-//		//since you only need to check when someone wins when the turn is advanced, game logic is here
-//		
-//		//if there have been too many years, the game ends
-//		if(e.getButton() == 1) {
-//			// generates the UI for ordering moves when a Unit is cliked on or a buildUI when a supply hub is clicked
-//			
-//			//if there's no panel currently pulled up and there is no unit on the tile and the tile has a supply hub, bring up the build panel
-//			if (panel == null && currentTile.isHub && currentTile.occupier == null && currentTile.possessor == playerID[turn]) {
-//				selectedTile = currentTile;
-//				buildUI pane = new buildUI();
-//				panel = pane;
-//				desktop.add(panel);
-//			}
-//			
-//			//if there is a unit on the tile, bring up the land unit UI or the sea unit UI depending on what type of unit it is
-//			else if (panel == null && currentTile.occupier != null) {
-//				selectedTile = currentTile;
-//				if (selectedTile.occupier instanceof landUnit) {
-//					selectedTile.occupier = currentTile.occupier;
-//					landUnitUI pane = new landUnitUI((landUnit)selectedTile.occupier);
-//					panel = pane;
-//					desktop.add(panel);
-//				}
-//				else {
-//					selectedTile.occupier = currentTile.occupier;
-//					seaUnitUI pane = new seaUnitUI((seaUnit)selectedTile.occupier);
-//					panel = pane;
-//					desktop.add(panel);
-//				}
-//			}
-//		
-//			/*
-//			 * section to execute moves
-//			 * 
-//			 * 
-//			 * 
-//			 */
-//			
-//			
-//			//build units
-//			if (panel != null && panel instanceof buildUI ) {
-//				buildUI use = (buildUI)panel;
-//				if (use.buildFleetButton) {
-//					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
-//					panel = null;
-//				}
-//				else if (use.buildLandUnit) {
-//					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
-//					panel = null;
-//				}
-//			}
-//			
-//			//move/fortify land units
-//			if (panel != null  && selectedTile.occupier!= null && panel instanceof landUnitUI ) {
-//				landUnitUI use = (landUnitUI) panel;
-//				landUnit chosenUnit = (landUnit)selectedTile.occupier;
-//				//move land units
-//				if (use.moveButtonPressed) {
-//					List adjList = Arrays.asList(selectedTile.adjacencyList);
-//					if(adjList.contains(currentTile)) {
-//						chosenUnit.move(currentTile);
-//					}
-//					else {
-//						System.out.println("You cannot move a unit to a nonadjacent tile");
-//					}
-//					
-//					for(char c : playerID) {
-//						playerMap.get(c).disposeUnits();
-//					}
-//					panel = null;
-//				}
-//				//fortify land units
-//				else if (use.supportButtonPressed) {
-//					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
-//						chosenUnit.support(currentTile.occupier);
-//						panel = null;
-//					}
-//				}
-//			}
-//			
-//			//move sea units
-//			else if (panel != null  && selectedTile.occupier!= null ) {
-//				seaUnitUI use = (seaUnitUI) panel;
-//				seaUnit chosenUnit = (seaUnit) selectedTile.occupier;
-//				if (use.moveButtonPressed) {
-//					List adjList = Arrays.asList(selectedTile.adjacencyList);
-//					if(adjList.contains(currentTile)) {
-//						
-//						chosenUnit.move(currentTile);
-//					
-//					}
-//					else {
-//						System.out.println("You cannot move a unit to a nonadjacent tile");
-//					}
-//					for(char c : playerID) {
-//						playerMap.get(c).disposeUnits();
-//					}
-//					panel = null;
-//				}
-//				else if (use.supportButtonPressed) {
-//					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit) {
-//						chosenUnit.support((seaUnit)currentTile.occupier);
-//						panel = null;
-//					}
-//				}	
-//			}
-//			//reset the panel to null when closing
-//			if (panel != null && panel.isClosed()) {
-//				panel = null;
-//			}
-//		}
-//		
-//		//on middle mouse
-//		else if(e.getButton() == 2) {
-//			
-//		}
-//		
-//		//on right click
-//		else {
-//			if(year > 1980) {
-//				endGame = true;
-//				return;
-//			}
-//			if(turn >= playerID.length - 1) {
-//				turn = 0;
-//				year++;
-//			}
-//			else {
-//				turn++;
-//			}
-//			System.out.println("Year: " + year + " Turn: " + turn);
-//			System.out.println("Player that just went/pressed a key: " + playerMap.get(playerID[turn]));
-//		}
-//		//if all players have gone, the "year" advances
-//		
-//		//checks all players to see whether one of them has controlled the majority of supply hubs and therefore won
-//		
-////		for(char c : playerMap.keySet()) {
-////			if(playerMap.get(c).hubCnt > 16) {
-////				endGame = true;
-////				winnerID = c;
-////				return;
-////			}
-////		}
-//		
-//
-//		
-//		
-//		
-//	}
 
 	public void mousePressed(MouseEvent e) {
 		
@@ -666,7 +502,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			addMouseListener(this);
 			addKeyListener(this);
 			setVisible(true);
-			setSize(990,900);
+			setSize(1440,900);
 			
 			
 			//list of tiles & players by playerID
@@ -687,12 +523,17 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			//asks for the amount of players and the player ID array
 			Scanner f = new Scanner(System.in);
 			
+			// instantiates writer 
+			orders = new File("order.txt");
 			try {
-				writer = new PrintWriter(new File("order.txt"));
+				writer = new PrintWriter(orders);
 			}
 			catch(Exception e) {
 				
 			}
+			writer.println(year);
+			
+			// sets up how many players are in the game
 			System.out.println("How many players would you like to have in this game? (3-7 allowed)");
 			int temp = f.nextInt();
 			if(temp >= 3 && temp <= 7) playerID = new char[temp];
@@ -1224,33 +1065,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		/********************************************************************************End of Tile Stuff*************************************************************************************************************************/
 			//allow the users to choose their respective starting nations
 			System.out.println("Choose your respective starting nation - type FRA for France, UK for the United Kingdom, RUS for Russia, GER for Germany, ITA for Italy, AUS for Austria, and OTT for the Ottomans");
-//			String s = f.next();
-//			for(char c : playerID) {
-//				System.out.println("Player " + c + " please choose your starting nation");
-//				s = f.next();
-//				if(s.charAt(0) == 'F') {
-//					playerMap.get(playerID[i]).setNation(France);
-//				}
-//				else if(s.charAt(0) == 'U') {
-//					playerMap.get(playerID[i]).setNation(United_Kingdom);
-//				}
-//				else if(s.charAt(0) == 'R') {
-//					playerMap.get(playerID[i]).setNation(Russia);
-//				}
-//				else if(s.charAt(0) == 'G') {
-//					playerMap.get(playerID[i]).setNation(Germany);
-//				}
-//				else if(s.charAt(0) == 'I') {
-//					playerMap.get(playerID[i]).setNation(Italy);
-//				}
-//				else if(s.charAt(0) == 'A') {
-//					playerMap.get(playerID[i]).setNation(Austria);
-//				}
-//				else if(s.charAt(0) == 'O') {
-//					playerMap.get(playerID[i]).setNation(Ottomans);
-//				}
-//			}
-
+			
 			String s;
 			for(int i = 0; i < playerID.length; i++) {
 				System.out.println("What is Player " + playerMap.get(playerID[i]).getName() + "'s starting nation?");
@@ -1300,10 +1115,6 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				}
 			}
 			f.close();
-//			playerMap.get(playerID[0]).getArmy().add(new landUnit(playerID[0], Petrograd));
-//			playerMap.get(playerID[0]).getFleet().add(new seaUnit(playerID[0], Skagerrak));			
-			
-			
 			new Thread(this).start();
 		}
 }

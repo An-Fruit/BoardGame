@@ -34,14 +34,14 @@ public class BoardGameRunner
 		JFrame window = new JFrame("Board Game Runner");
 		final JDesktopPane desktop = new JDesktopPane();
 		BoardGame gameMap = new BoardGame(desktop);
-		desktop.add(gameMap);		
+		
+		desktop.add(gameMap);	
 		
 		// adds the game to the JFrame
 		window.setVisible(true);
 		window.add(desktop);
 		window.setSize(WIDTH,HEIGHT);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		
 	}
 

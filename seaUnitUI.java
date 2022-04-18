@@ -11,7 +11,6 @@ public class seaUnitUI extends UnitUI{
 	boolean supportButtonPressed;
 	boolean convoyButtonPressed;
 	
-	
 	public seaUnitUI(seaUnit u)
 	{
 		super();
