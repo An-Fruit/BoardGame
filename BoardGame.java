@@ -43,7 +43,6 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 	UnitUI panel; 
 	Tile selectedTile;
 	PrintWriter writer;
-	ConsoleUI console;
 	File orders;
 	
 
@@ -54,6 +53,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				playerMap.get(t.possessor).getTiles().add(t);
 			}
 		}
+		
 		
 		//print year and turn for debug purposes
 		//System.out.println("yr: " + year + " turn: " + turn); 
@@ -79,32 +79,33 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		
 		try {
 			Scanner scan = new Scanner(orders);
-			while (scan.hasNext() && !scan.nextLine().equals(year+"")) {
-				scan.nextLine();
+			while (scan.hasNext()) {
+				String s = scan.nextLine().trim();
+				if(s.equals(year + "")) {
+					break;
+				}
 			}
 			int inc = 0;
 			while(scan.hasNext()) {
 				String[] dec = scan.nextLine().split(" ");
-				if (dec[0].charAt(0) == playerID[turn]) {
-					String prin = "";
-					if (dec[1].equals("build_landUnit")) {
-						prin += "build army " + dec[2];
-					}
-					else if (dec[1].equals("build_seaUnit")) {
-						prin += "build fleet " + dec[2];
-					}
-					else if (dec[2].equals("move")) {
-						prin += dec[1] + " moves to " + dec[3];
-					}
-					else if (dec[2].equals("support")) {
-						prin += dec[1] + " supports " + dec[3];
-					}
-					else if (dec[2].equals("convoy")) {
-						prin += dec[1] + " convoys ";
-					}
-					inc +=15;
-					window.drawString(prin, 1020, 50 + inc);
+				String prin = "";
+				if (dec[1].equals("build_landUnit")) {
+					prin += "build army " + dec[2];
 				}
+				else if (dec[1].equals("build_seaUnit")) {
+					prin += "build fleet " + dec[2];
+				}
+				else if (dec[2].equals("move")) {
+					prin += dec[1] + " moves to " + dec[3];
+				}
+				else if (dec[2].equals("support")) {
+					prin += dec[1] + " supports " + dec[3];
+				}
+				else if (dec[2].equals("support")) {
+					prin += dec[1] + " supports " + dec[3];
+				}
+				inc +=15;
+				window.drawString(prin, 1020, 50 + inc);
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -122,7 +123,8 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 						break;
 				//green
 				case 1: color = new Color(0,255,0,100);
-						break;	
+						break;
+						
 				//blue
 				case 2: color = new Color(0,0,255,100);
 						break;
@@ -161,6 +163,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			//green
 			case 'B': color = new Color(0,255,0,100);
 					break;
+					
 			//blue
 			case 'C': color = new Color(0,0,255,100);
 					break;
@@ -297,14 +300,14 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				System.out.println(1);
 				if (use.buildFleetButton) {
 					System.out.println(2);
-					writer.println(playerID[turn] + " build_seaUnit " + selectedTile.name);
-					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
+					writer.println(playerID[turn] + selectedTile.name + " build_seaUnit");
+//					playerMap.get(playerID[turn]).getFleet().add(new seaUnit(playerID[turn], selectedTile));
 					panel = null;
 					writer.flush();
 				}
 				else if (use.buildLandUnit) {
-					writer.println(playerID[turn] + " build_landUnit " + selectedTile.name);
-					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
+					writer.println(playerID[turn] + selectedTile.name + " build_landUnit");
+//					playerMap.get(playerID[turn]).getArmy().add(new landUnit(playerID[turn], selectedTile));
 					panel = null;
 					writer.flush();
 				}
@@ -319,7 +322,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 					List adjList = Arrays.asList(selectedTile.adjacencyList);
 					if(adjList.contains(currentTile)) {
 						writer.println(playerID[turn] + " " + selectedTile.name + " move " + currentTile.name);
-						chosenUnit.move(currentTile);
+//						chosenUnit.move(currentTile);
 						writer.flush();
 					}
 					else {
@@ -334,7 +337,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				else if (use.supportButtonPressed) {
 					if (currentTile.occupier != null && currentTile.occupier instanceof landUnit ) {
 						writer.println(playerID[turn] + " " + selectedTile.name + " support " + currentTile.name);
-						chosenUnit.support(currentTile.occupier);
+//						chosenUnit.support(currentTile.occupier);
 						panel = null;
 						writer.flush();
 					}
@@ -349,7 +352,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 					List adjList = Arrays.asList(selectedTile.adjacencyList);
 					if(adjList.contains(currentTile)) {
 						writer.println(playerID[turn] + " " + selectedTile.name + " move " + currentTile.name);
-						chosenUnit.move(currentTile);
+//						chosenUnit.move(currentTile);
 						writer.flush();
 					}
 					else {
@@ -363,7 +366,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 				else if (use.supportButtonPressed) {
 					if (currentTile.occupier != null) {
 						writer.println(playerID[turn] + " " + selectedTile.name + " support " + currentTile.name);
-						chosenUnit.support((seaUnit)currentTile.occupier);
+//						chosenUnit.support((seaUnit)currentTile.occupier);
 						panel = null;
 						writer.flush();
 					}
@@ -392,15 +395,16 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			
 			if(turn >= playerID.length - 1) {
 				turn = 0;
-				year++;
-				writer.println(year+"");
-				writer.flush();
-				
 				try {
 					execute(orders);
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 				}
+				year++;
+				writer.println(year+"");
+				writer.flush();
+				
+				
 				
 			}
 			else if(year > 1980) {
@@ -427,12 +431,49 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		}
 	}
 	
-		public void execute(File f) throws FileNotFoundException {
+	public void execute(File f) throws FileNotFoundException {
 		Scanner scan = new Scanner(f);
 		
-		while (!scan.nextLine().trim().equals((year-1)+"")) {
+		//while the file still has orders and it isn't yet the current year, iterate
+		while(scan.hasNext()) {
+			String s = scan.nextLine().trim();
+			if(s.equals((year) + "")) break;
 		}
-		System.out.println(scan.nextLine());
+		//after reaching the orders of the current year, execute the orders;
+		while(scan.hasNext()) {
+			String[] order = scan.nextLine().trim().split("");
+			if(order[2].equals("build_seaUnit")) {
+				playerMap.get(order[0].charAt(0)).getFleet().add(new seaUnit(order[0].charAt(0), selectedTile));
+			}
+			else if(order[2].equals("build_landUnit")) {
+				playerMap.get(order[0].charAt(0)).getArmy().add(new landUnit(order[0].charAt(0), selectedTile));
+			}
+			else if(order[2].equals("move")) {
+				for(Tile t : playerMap.get(order[0].charAt(0)).getTiles()) {
+					if(t.name.equals(order[1])) {
+						if(t.occupier != null) {
+								for(Tile t1 : TileList) {
+									if(t1.name.equals(order[3])) {
+										t.occupier.move(t1);
+										break;
+									}
+								}
+							break;
+							
+						}
+					}
+				}
+				playerMap.get(order[0].charAt(0)).disposeUnits();
+			}
+			
+			else if(order[2].equals("support")) {
+				
+			}
+			
+			
+		}
+		
+		
 		
 	}
 
