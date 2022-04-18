@@ -55,7 +55,6 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			}
 		}
 		
-		
 		//print year and turn for debug purposes
 		//System.out.println("yr: " + year + " turn: " + turn); 
 		
@@ -86,24 +85,26 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			int inc = 0;
 			while(scan.hasNext()) {
 				String[] dec = scan.nextLine().split(" ");
-				String prin = "";
-				if (dec[1].equals("build_landUnit")) {
-					prin += "build army " + dec[2];
+				if (dec[0].charAt(0) == playerID[turn]) {
+					String prin = "";
+					if (dec[1].equals("build_landUnit")) {
+						prin += "build army " + dec[2];
+					}
+					else if (dec[1].equals("build_seaUnit")) {
+						prin += "build fleet " + dec[2];
+					}
+					else if (dec[2].equals("move")) {
+						prin += dec[1] + " moves to " + dec[3];
+					}
+					else if (dec[2].equals("support")) {
+						prin += dec[1] + " supports " + dec[3];
+					}
+					else if (dec[2].equals("convoy")) {
+						prin += dec[1] + " convoys ";
+					}
+					inc +=15;
+					window.drawString(prin, 1020, 50 + inc);
 				}
-				else if (dec[1].equals("build_seaUnit")) {
-					prin += "build fleet " + dec[2];
-				}
-				else if (dec[2].equals("move")) {
-					prin += dec[1] + " moves to " + dec[3];
-				}
-				else if (dec[2].equals("support")) {
-					prin += dec[1] + " supports " + dec[3];
-				}
-				else if (dec[2].equals("support")) {
-					prin += dec[1] + " supports " + dec[3];
-				}
-				inc +=15;
-				window.drawString(prin, 1020, 50 + inc);
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -121,8 +122,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 						break;
 				//green
 				case 1: color = new Color(0,255,0,100);
-						break;
-						
+						break;	
 				//blue
 				case 2: color = new Color(0,0,255,100);
 						break;
@@ -161,7 +161,6 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			//green
 			case 'B': color = new Color(0,255,0,100);
 					break;
-					
 			//blue
 			case 'C': color = new Color(0,0,255,100);
 					break;
@@ -428,11 +427,10 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 		}
 	}
 	
-	public void execute(File f) throws FileNotFoundException {
+		public void execute(File f) throws FileNotFoundException {
 		Scanner scan = new Scanner(f);
 		
 		while (!scan.nextLine().trim().equals((year-1)+"")) {
-			scan.nextLine();
 		}
 		System.out.println(scan.nextLine());
 		
