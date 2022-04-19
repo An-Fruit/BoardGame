@@ -450,11 +450,23 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			String[] order = scan.nextLine().trim().split(" ");
 			System.out.println(Arrays.toString(order));
 			if(order[2].equals("build_seaUnit")) {
-				playerMap.get(order[0].charAt(0)).getFleet().add(new seaUnit(order[0].charAt(0), selectedTile));
+				for(Tile t : playerMap.get(order[0].charAt(0)).getTiles()){
+					if(t.name.equals(order[1])) {
+						playerMap.get(order[0].charAt(0)).getFleet().add(new seaUnit(order[0].charAt(0), t));
+						break;
+					}
+				}
+				
 			}
 			else if(order[2].equals("build_landUnit")) {
-				playerMap.get(order[0].charAt(0)).getArmy().add(new landUnit(order[0].charAt(0), selectedTile));
+				for(Tile t : playerMap.get(order[0].charAt(0)).getTiles()){
+					if(t.name.equals(order[1])) {
+						playerMap.get(order[0].charAt(0)).getArmy().add(new landUnit(order[0].charAt(0), t));
+						break;
+					}
+				}
 			}
+			//TODO: figure out if this breaks something
 			else if(order[2].equals("move")) {
 				for(Tile t : playerMap.get(order[0].charAt(0)).getTiles()) {
 					if(t.name.equals(order[1])) {
