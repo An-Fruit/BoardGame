@@ -38,5 +38,13 @@ public class Unit extends JPanel{
 	
 
 	}
+	
+	public boolean valid(Tile t) {
+		return true;
+	}
+	public void move(Tile t) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

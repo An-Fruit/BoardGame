@@ -50,6 +50,7 @@ public class Player {
 			}
 		}
 	}
+	
 	public String toString(){
 		String s = "";
 		s += "Player Name: " + name + " ";

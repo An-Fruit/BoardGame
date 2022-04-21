@@ -16,6 +16,7 @@ public class landUnit extends Unit{
 		strength = 1;
 	}
 	
+	
 	public void move(Tile endTile) {
 		//if the ending tile is a landtile, you can move the troops
 		if (endTile instanceof landTile) {
@@ -34,20 +35,63 @@ public class landUnit extends Unit{
 					this.place.occupier = null;
 					//set the occupying unit of the endtile to this unit
 					endTile.occupier = this;
+					endTile.possessor = this.id;
 					//reciprocate on both ends
 					this.place = endTile;
+					
 				}
 				
 			}
 			//if the ending tile is not occupied
 			catch (Exception e) {
 				endTile.occupier = this;
+				endTile.possessor = this.id;
 				this.place.occupier = null;
 				this.place = endTile;
 			}
 		}
 		else {
 			System.out.println("You cannot move a land unit into or on a sea tile");
+		}
+	}
+	
+	public boolean valid(Tile endTile) {
+		//if the ending tile is a landtile, you can move the troops
+		if (endTile instanceof landTile) {
+			//if the ending tile is occupied 
+			try {
+				Unit enemyUnit = endTile.occupier;
+				if (enemyUnit.strength >= this.strength) {
+//					System.out.println("You cannot move a unit onto a tile where the occupying strength is greater than the unit strength");
+					return false;
+				}
+				else {
+//					//subtract the enemy unit strength from ours
+//					this.strength -= enemyUnit.strength;
+//					//displace the original end tile occupying unit
+//					enemyUnit.place = null;
+//					//clear out the current tile so we don't duplicate units
+//					this.place.occupier = null;
+//					//set the occupying unit of the endtile to this unit
+//					endTile.occupier = this;
+//					//reciprocate on both ends
+//					this.place = endTile;
+					return true;
+//					
+				}
+				
+			}
+			//if the ending tile is not occupied
+			catch (Exception e) {
+//				endTile.occupier = this;
+//				this.place.occupier = null;
+//				this.place = endTile;
+				return true;
+			}
+		}
+		else {
+//			System.out.println("You cannot move a land unit into or on a sea tile");
+			return false;
 		}
 	}
 	

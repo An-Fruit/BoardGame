@@ -48,11 +48,11 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 
 	public void paint( Graphics window )
 	{
-		for(Tile t : TileList) {
-			if(t.possessor != 'Z') {
-				playerMap.get(t.possessor).getTiles().add(t);
-			}
-		}
+//		for(Tile t : TileList) {
+//			if(t.possessor != 'Z') {
+//				playerMap.get(t.possessor).getTiles().add(t);
+//			}
+//		}
 		
 		
 		//print year and turn for debug purposes
@@ -264,6 +264,7 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 			// generates the UI for ordering moves when a Unit is cliked on or a buildUI when a supply hub is clicked
 			
 			//if there's no panel currently pulled up and there is no unit on the tile and the tile has a supply hub, bring up the build panel
+//			if (panel == null && currentTile.isHub && currentTile.occupier == null && currentTile.possessor == playerID[turn]) {
 			if (panel == null && currentTile.isHub && currentTile.occupier == null && currentTile.possessor == playerID[turn]) {
 				selectedTile = currentTile;
 				buildUI pane = new buildUI();
@@ -472,8 +473,18 @@ public class BoardGame extends JInternalFrame implements MouseListener, Runnable
 					if(t.name.equals(order[1])) {
 						if(t.occupier != null) {
 								for(Tile t1 : TileList) {
-									if(t1.name.equals(order[3])) {
+									if(t1.name.equals(order[3]) && t.occupier.valid(t1)) {
 										t.occupier.move(t1);
+										playerMap.get(order[0].charAt(0)).getTiles().add(t1);
+										for(char c : playerID) {
+											HashSet<Tile> removeList = new HashSet<>();
+											for(Tile t2 : playerMap.get(c).getTiles()) {
+												if(t2.possessor != c && t2.possessor != 'Z') removeList.add(t2);
+											}
+											for(Tile t3 : removeList) {
+												playerMap.get(c).getTiles().remove(t3);
+											}
+										}
 										break;
 									}
 								}
